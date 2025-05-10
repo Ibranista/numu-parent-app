@@ -1,7 +1,7 @@
+import { decrement, increment } from "@/features/counter/counter.slice";
+import { AppDispatch, RootState } from "@/store/store";
 import { Button, Text, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { decrement, increment } from "../features/counter/counter.slice";
-import { AppDispatch, RootState } from "../store/store";
 
 export default function Index() {
   const count = useSelector((state: RootState) => state.counter.value);
