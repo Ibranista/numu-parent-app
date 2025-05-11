@@ -1,12 +1,17 @@
 import "@/global.css";
+import { AuthContext } from "@/utils/authContext";
 import { Redirect, Stack } from "expo-router";
+import { useContext } from "react";
 
-const isLoggedIn = true;
+const isLoggedIn = false;
 
 export default function ProtectedLayout() {
-  if (!isLoggedIn) {
-    return <Redirect href="/login" />;
+  const authState = useContext(AuthContext);
+  console.log("auth state from protected layout-->", authState);
+  if (!authState.isLoggedIn) {
+    return <Redirect href={"/login"} />;
   }
+
   return (
     <Stack>
       <Stack.Screen
