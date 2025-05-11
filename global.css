@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@theme {
+    --color-primary: #8450A0;
+    --color-primary-hover: #9810fa;
+    --color-primary-gray: #364153;
+}
