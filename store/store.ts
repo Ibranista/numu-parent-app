@@ -4,12 +4,13 @@ import { combineReducers } from "redux";
 import { FLUSH, PAUSE, PERSIST, persistReducer, persistStore, PURGE, REGISTER, REHYDRATE } from "redux-persist";
 import authReducer from "../features/auth/authSlice";
 import childrenReducer from "../features/child/childSlice";
+import concernReducer from "../features/concerns/concerns.slice";
 import counterReducer from "../features/counter/counter.slice";
-
 const rootReducer = combineReducers({
     counter: counterReducer,
     auth: authReducer,
     children: childrenReducer,
+    concerns: concernReducer,
 });
 
 const persistConfig = {

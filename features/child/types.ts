@@ -16,9 +16,9 @@ export interface IChildResponse {
 }
 
 export interface IChild {
-    id: string;
+    id?: string;
     name: string;
-    gender: "male" | "female";
+    gender: "male" | "female" | "";
     birthDate: string;
     concern_ids: string[];
 };
