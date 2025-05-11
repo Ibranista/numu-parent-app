@@ -23,7 +23,7 @@ export default function ChildScreen() {
     name: item.title,
   }));
   const [showDatePicker, setShowDatePicker] = React.useState(false);
-  const [step, setStep] = useState(0); // 0: name, 1: gender, 2: birthDate, 3: concerns
+  const [step, setStep] = useState(0);
   const steps = ["Name", "Gender", "Birth Date", "Concerns"];
 
   const formik = useFormik({
