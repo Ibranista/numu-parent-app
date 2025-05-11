@@ -22,6 +22,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import Toast from "react-native-toast-message";
 
 export default function MyChildren() {
   const router = useRouter();
@@ -70,8 +71,23 @@ export default function MyChildren() {
       ).unwrap();
 
       dispatch(getChildren({ page: 1, limit: 5 }));
+      Toast.show({
+        type: "success",
+        text1:
+          status === "accepted"
+            ? "Therapist accepted successfully!"
+            : "Therapist declined successfully!",
+        position: "top",
+        visibilityTime: 2000,
+      });
     } catch (error) {
       console.error("Error updating therapist status:", error);
+      Toast.show({
+        type: "error",
+        text1: "Failed to update therapist status.",
+        position: "top",
+        visibilityTime: 2000,
+      });
     } finally {
       setLoadingTherapistIds((prev) => prev.filter((tId) => tId !== id));
 
