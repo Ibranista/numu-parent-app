@@ -3,11 +3,13 @@ import { configureStore } from "@reduxjs/toolkit";
 import { combineReducers } from "redux";
 import { FLUSH, PAUSE, PERSIST, persistReducer, persistStore, PURGE, REGISTER, REHYDRATE } from "redux-persist";
 import authReducer from "../features/auth/authSlice";
+import childrenReducer from "../features/child/childSlice";
 import counterReducer from "../features/counter/counter.slice";
 
 const rootReducer = combineReducers({
     counter: counterReducer,
     auth: authReducer,
+    children: childrenReducer,
 });
 
 const persistConfig = {
