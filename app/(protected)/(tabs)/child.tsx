@@ -141,7 +141,7 @@ export default function ChildScreen() {
                   : isCompleted
                   ? "bg-purple-500"
                   : "bg-gray-600 opacity-60"
-              } rounded-full w-16 h-16 justify-center`}
+              } rounded-full w-16 h-20 justify-center`}
               style={{ opacity: isClickable ? 1 : 0.5 }}
             >
               <Text className="text-white font-bold text-2xl">
