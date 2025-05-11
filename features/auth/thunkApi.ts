@@ -10,7 +10,6 @@ export const getUserProfile = createAsyncThunk(
     "auth/getUserProfile",
     async (firebaseUid: string, thunkAPI) => {
         try {
-            console.log("fetching user with uid", firebaseUid);
             const response = await api.get(`${feature}/profile/${firebaseUid}/`);
             console.log("user profile response", response.data);
             return response.data;

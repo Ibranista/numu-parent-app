@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { initialState } from "./initialState";
-import { createChild } from "./thunkApi";
-import { IChildResponse } from "./types";
+import { createChild, getChildren } from "./thunkApi";
+import { IChildrenResponse } from "./types";
 
 const childSlice = createSlice({
     name: "child",
@@ -24,11 +24,23 @@ const childSlice = createSlice({
             })
             .addCase(createChild.fulfilled, (state, action) => {
                 state.loading = false;
-                state.child = action.payload as IChildResponse;
+                state.child = action.payload as IChildrenResponse;
             })
             .addCase(createChild.rejected, (state, action) => {
                 state.loading = false;
                 state.error = (action.payload as { detail?: string })?.detail || "Failed to create child";
+            })
+            .addCase(getChildren.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(getChildren.fulfilled, (state, action) => {
+                state.loading = false;
+                state.child = action.payload;
+            })
+            .addCase(getChildren.rejected, (state, action) => {
+                state.loading = false;
+                state.error = (action.payload as { detail?: string })?.detail || "Failed to fetch children";
             });
     },
 });
