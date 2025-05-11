@@ -32,8 +32,28 @@ export default function MyChildren() {
   const [loadingTherapistIds, setLoadingTherapistIds] = useState<string[]>([]);
   const [declineSubmitting, setDeclineSubmitting] = useState(false);
 
+  // LISTEN TO NEW MATCHES: Self Note: always start ur server at 0.0.0
   useEffect(() => {
-    console.log("Fetching children data...");
+    const ws = new WebSocket("ws://10.0.2.2:8000/ws/therapistmatch/");
+
+    ws.onmessage = (event) => {
+      const eventData = JSON.parse(event.data);
+      dispatch(getChildren({ page: 1, limit: 5 }));
+      Toast.show({
+        type: "info",
+        text1: "New Therapist Match!",
+        text2: `${eventData.therapist.name} has ${eventData.therapist.experience_years} years of experience`,
+        position: "top",
+        visibilityTime: 2000,
+      });
+    };
+
+    return () => {
+      ws.close();
+    };
+  }, [dispatch]);
+
+  useEffect(() => {
     dispatch(getChildren({ page: 1, limit: 5 }));
   }, [dispatch]);
 
