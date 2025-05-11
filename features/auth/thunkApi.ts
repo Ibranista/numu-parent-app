@@ -10,14 +10,20 @@ export const getUserProfile = createAsyncThunk(
     "auth/getUserProfile",
     async (firebaseUid: string, thunkAPI) => {
         try {
+            console.log("fetching user with uid", firebaseUid);
             const response = await api.get(`${feature}/profile/${firebaseUid}/`);
+            console.log("user profile response", response.data);
             return response.data;
         } catch (error: any) {
-            return thunkAPI.rejectWithValue(error.response.data);
+            console.error("Error fetching user profile:", {
+                message: error.message,
+                response: error.response,
+                config: error.config
+            });
+            return thunkAPI.rejectWithValue(error.response?.data || error.message);
         }
     }
 );
-
 export const registerUser = createAsyncThunk(
     "auth/registerUser",
     async (userData: IUser, thunkAPI) => {
