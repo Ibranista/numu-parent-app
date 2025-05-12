@@ -18,6 +18,7 @@ import {
 } from "react-native";
 import MultiSelect from "react-native-multiple-select";
 import Toast from "react-native-toast-message";
+import Icon from "react-native-vector-icons/FontAwesome";
 
 export default function App() {
   const dispatch = useAppDispatch();
@@ -190,7 +191,11 @@ export default function App() {
                           color: values.gender === "male" ? "#8e44ad" : "#999",
                         }}
                       >
-                        ♂
+                        <Icon
+                          name="male"
+                          size={24}
+                          color={values.gender === "boy" ? "#8e44ad" : "#999"}
+                        />
                       </Text>
                       <Text style={{ marginTop: 5, fontWeight: "500" }}>
                         Male
@@ -218,7 +223,11 @@ export default function App() {
                             values.gender === "female" ? "#8e44ad" : "#999",
                         }}
                       >
-                        ♀
+                        <Icon
+                          name="female"
+                          size={24}
+                          color={values.gender === "girl" ? "#8e44ad" : "#999"}
+                        />
                       </Text>
                       <Text style={{ marginTop: 5, fontWeight: "500" }}>
                         Female
