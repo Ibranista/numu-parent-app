@@ -1,355 +1,610 @@
-import { selectChild } from "@/features/child/selector";
+import Card from "@/components/Card";
+import ProgressBar from "@/components/form/progressBar";
 import { createChild } from "@/features/child/thunkApi";
 import { selectConcerns } from "@/features/concerns/selector";
 import { getConcerns } from "@/features/concerns/thunk.api";
 import { useAppDispatch, useAppSelector } from "@/hooks/stateHooks";
-import { childInitialState, childSchema } from "@/schema/childSchema";
+import { childSchema } from "@/schema/childSchema";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { Picker } from "@react-native-picker/picker";
-import { useFormik } from "formik";
+import { Formik } from "formik";
 import React, { useEffect, useState } from "react";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import MultiSelect from "react-native-multiple-select";
 import Toast from "react-native-toast-message";
 
-export default function ChildScreen() {
+export default function App() {
   const dispatch = useAppDispatch();
-  const childState = useAppSelector(selectChild);
-  const concernsState = useAppSelector(selectConcerns);
-  const { loading, error } = childState ?? {};
-  const concernItems = concernsState?.concerns?.results.map((item) => ({
-    id: item.id,
-    name: item.title,
-  }));
-  const [showDatePicker, setShowDatePicker] = React.useState(false);
-  const [step, setStep] = useState(0);
-  const steps = ["Name", "Gender", "Birth Date", "Concerns"];
-
-  const formik = useFormik({
-    initialValues: childInitialState,
-    validationSchema: childSchema,
-    onSubmit: async (values, { resetForm }) => {
-      const result = await dispatch(createChild(values));
-      if (createChild.fulfilled.match(result)) {
-        Toast.show({
-          type: "success",
-          text1: "Child created successfully!",
-          position: "top",
-          visibilityTime: 2000,
-        });
-        resetForm();
-        setStep(0);
-      } else {
-        Toast.show({
-          type: "error",
-          text1: "Failed to create child",
-          text2: error || "Please try again.",
-          position: "top",
-        });
-      }
-    },
-  });
+  const concernData = useAppSelector(selectConcerns);
+  const totalSteps = 5;
+  const [step, setStep] = useState(-1);
 
   useEffect(() => {
     dispatch(getConcerns(1));
   }, [dispatch]);
 
-  const validateStep = async () => {
-    if (step === 0) {
-      await formik.setFieldTouched("name", true);
-      await formik.validateField("name");
-      return !formik.errors.name;
-    }
-    if (step === 1) {
-      await formik.setFieldTouched("gender", true);
-      await formik.validateField("gender");
-      return !formik.errors.gender;
-    }
-    if (step === 2) {
-      await formik.setFieldTouched("birthDate", true);
-      await formik.validateField("birthDate");
-      return !formik.errors.birthDate;
-    }
-    if (step === 3) {
-      await formik.setFieldTouched("concern_ids", true);
-      await formik.validateField("concern_ids");
-      return !formik.errors.concern_ids;
-    }
-    return false;
-  };
-
   return (
-    <View className="flex-1 justify-center bg-gray-900 px-6">
-      {/* Step Circles */}
-      <View className="flex-row justify-center items-center mb-6 mt-2">
-        {steps.map((label, idx) => {
-          const isCurrent = idx === step;
-          const isCompleted = idx < step;
-          const isClickable =
-            idx <= step ||
-            (idx > step &&
-              Array.from({ length: idx }).every((_, i) => {
-                if (i === 0) return !formik.errors.name && formik.values.name;
-                if (i === 1)
-                  return !formik.errors.gender && formik.values.gender;
-                if (i === 2)
-                  return !formik.errors.birthDate && formik.values.birthDate;
-                return true;
-              }));
-          return (
-            <TouchableOpacity
-              key={label}
-              disabled={!isClickable}
-              onPress={async () => {
-                if (idx === step) return;
-                let canGo = true;
-                for (let i = 0; i < idx; i++) {
-                  if (i === 0) {
-                    await formik.setFieldTouched("name", true);
-                    await formik.validateField("name");
-                    if (formik.errors.name || !formik.values.name) {
-                      canGo = false;
-                      setStep(i);
-                      break;
+    <Formik
+      initialValues={{
+        name: "",
+        gender: "",
+        birthDate: "",
+        concern_ids: [],
+      }}
+      validationSchema={childSchema}
+      onSubmit={async (values, { setSubmitting, resetForm }) => {
+        const result = await dispatch(
+          createChild({
+            gender: values.gender as "" | "male" | "female",
+            birthDate: values.birthDate as unknown as Date,
+            concern_ids: values.concern_ids,
+            name: values.name,
+          })
+        );
+        setSubmitting(false);
+        if (createChild.fulfilled.match(result)) {
+          Toast.show({
+            type: "success",
+            text1: "Child created successfully!",
+            position: "top",
+            visibilityTime: 2000,
+          });
+          resetForm();
+          setStep(-1);
+        }
+      }}
+    >
+      {({
+        values,
+        errors,
+        touched,
+        handleChange,
+        handleBlur,
+        handleSubmit,
+        setFieldValue,
+        isSubmitting,
+      }) => {
+        const concernList = concernData?.concerns?.results || [];
+        // Step navigation validation
+        const canGoToStep = (idx: number) => {
+          if (idx === 0) return true;
+          if (idx === 1) return values.name && !errors.name;
+          if (idx === 2) return values.name && values.gender && !errors.gender;
+          if (idx === 3)
+            return (
+              values.name &&
+              values.gender &&
+              values.birthDate &&
+              !errors.birthDate
+            );
+          if (idx === 4)
+            return (
+              values.name &&
+              values.gender &&
+              values.birthDate &&
+              values.concern_ids.length > 0 &&
+              !errors.concern_ids
+            );
+          return false;
+        };
+        // Render steps
+        const renderStep = () => {
+          switch (step) {
+            case 0:
+              return (
+                <Card
+                  title={"Let&apos;s start with your child&apos;s name."}
+                  subTitle={"Tell us about your child."}
+                  handleSubmit={undefined}
+                >
+                  <ProgressBar step={1} totalSteps={5} />
+                  <Text style={{ marginBottom: 5, fontWeight: "500" }}>
+                    Child&apos;s Name
+                  </Text>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      borderWidth: 1,
+                      borderColor: "#ccc",
+                      paddingHorizontal: 10,
+                      borderRadius: 8,
+                    }}
+                  >
+                    <TextInput
+                      style={{ flex: 1, height: 40 }}
+                      placeholder="Enter your child's name"
+                      onChangeText={handleChange("name")}
+                      onBlur={handleBlur("name")}
+                      value={values.name}
+                    />
+                  </View>
+                  {touched.name && errors.name && (
+                    <Text style={{ color: "red", fontSize: 12, marginTop: 5 }}>
+                      {errors.name}
+                    </Text>
+                  )}
+                  <TouchableOpacity
+                    style={[
+                      styles.backBtn,
+                      (!values.name || errors.name) && {
+                        backgroundColor: "#8d44ada6",
+                      },
+                    ]}
+                    onPress={() => values.name && !errors.name && setStep(1)}
+                    disabled={!values.name || !!errors.name}
+                  >
+                    <Text
+                      style={[
+                        styles.stepNavActive,
+                        (!values.name || errors.name) && {
+                          backgroundColor: "transparent",
+                        },
+                      ]}
+                    >
+                      Next
+                    </Text>
+                  </TouchableOpacity>
+                </Card>
+              );
+            case 1:
+              return (
+                <Card
+                  title="Now, select your child's gender."
+                  subTitle="Gender"
+                  handleSubmit={undefined}
+                >
+                  <ProgressBar step={2} totalSteps={5} />
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-around",
+                      marginTop: 25,
+                      marginBottom: 10,
+                    }}
+                  >
+                    <TouchableOpacity
+                      style={{
+                        flexDirection: "column",
+                        alignItems: "center",
+                        padding: 10,
+                        borderRadius: 12,
+                        borderWidth: 1,
+                        borderColor:
+                          values.gender === "male" ? "#8e44ad" : "#ccc",
+                        width: 90,
+                        backgroundColor:
+                          values.gender === "male" ? "#f7efff" : "#fff",
+                      }}
+                      onPress={() => setFieldValue("gender", "male")}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 24,
+                          color: values.gender === "male" ? "#8e44ad" : "#999",
+                        }}
+                      >
+                        ♂
+                      </Text>
+                      <Text style={{ marginTop: 5, fontWeight: "500" }}>
+                        Male
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={{
+                        flexDirection: "column",
+                        alignItems: "center",
+                        padding: 10,
+                        borderRadius: 12,
+                        borderWidth: 1,
+                        borderColor:
+                          values.gender === "female" ? "#8e44ad" : "#ccc",
+                        width: 90,
+                        backgroundColor:
+                          values.gender === "female" ? "#f7efff" : "#fff",
+                      }}
+                      onPress={() => setFieldValue("gender", "female")}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 24,
+                          color:
+                            values.gender === "female" ? "#8e44ad" : "#999",
+                        }}
+                      >
+                        ♀
+                      </Text>
+                      <Text style={{ marginTop: 5, fontWeight: "500" }}>
+                        Female
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                  {touched.gender && errors.gender && (
+                    <Text style={{ color: "red", fontSize: 12, marginTop: 5 }}>
+                      {errors.gender}
+                    </Text>
+                  )}
+                  <View style={{ height: 10 }} />
+                  <TouchableOpacity
+                    style={styles.backBtn}
+                    onPress={() => setStep(0)}
+                  >
+                    <Text style={styles.stepNavActive}>Prev</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[
+                      styles.backBtn,
+                      (!values.gender || errors.gender) && {
+                        backgroundColor: "#8d44ada6",
+                      },
+                    ]}
+                    onPress={() =>
+                      values.gender && !errors.gender && setStep(2)
                     }
-                  }
-                  if (i === 1) {
-                    await formik.setFieldTouched("gender", true);
-                    await formik.validateField("gender");
-                    if (formik.errors.gender || !formik.values.gender) {
-                      canGo = false;
-                      setStep(i);
-                      break;
+                    disabled={!values.gender || !!errors.gender}
+                  >
+                    <Text
+                      style={[
+                        styles.stepNavActive,
+                        (!values.gender || errors.gender) && {
+                          backgroundColor: "transparent",
+                        },
+                      ]}
+                    >
+                      Next
+                    </Text>
+                  </TouchableOpacity>
+                </Card>
+              );
+            case 2:
+              return (
+                <Card
+                  title="When was your child born?"
+                  subTitle="Birth Date"
+                  handleSubmit={undefined}
+                >
+                  <ProgressBar step={3} totalSteps={5} />
+                  <StepThreeFormik
+                    value={values.birthDate}
+                    error={touched.birthDate && errors.birthDate}
+                    onChange={(date: string) =>
+                      setFieldValue("birthDate", date)
                     }
-                  }
-                  if (i === 2) {
-                    await formik.setFieldTouched("birthDate", true);
-                    await formik.validateField("birthDate");
-                    if (formik.errors.birthDate || !formik.values.birthDate) {
-                      canGo = false;
-                      setStep(i);
-                      break;
+                  />
+                  <View style={{ height: 10 }} />
+                  <TouchableOpacity
+                    style={styles.backBtn}
+                    onPress={() => setStep(1)}
+                  >
+                    <Text style={styles.stepNavActive}>Prev</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[
+                      styles.backBtn,
+                      (!values.birthDate || errors.birthDate) && {
+                        backgroundColor: "#8d44ada6",
+                      },
+                    ]}
+                    onPress={() =>
+                      values.birthDate && !errors.birthDate && setStep(3)
                     }
-                  }
-                }
-                if (canGo) setStep(idx);
-              }}
-              className={`mx-2 items-center ${
-                isCurrent
-                  ? "border-4 border-purple-500 bg-purple-700"
-                  : isCompleted
-                  ? "bg-purple-500"
-                  : "bg-gray-600 opacity-60"
-              } rounded-full w-16 h-20 justify-center`}
-              style={{ opacity: isClickable ? 1 : 0.5 }}
-            >
-              <Text className="text-white font-bold text-2xl">
-                {isCompleted ? "✓" : idx + 1}
-              </Text>
-              <Text className="text-xs text-white mt-1">Step {idx + 1}</Text>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
-      <Text className="text-white text-3xl font-bold mb-6 text-center">
-        Create Child Profile
-      </Text>
-      <Text className="text-white text-base text-center mb-4">
-        Step {step + 1} of 4: {steps[step]}
-      </Text>
-
-      {step === 0 && (
-        <>
-          <TextInput
-            placeholder="Name"
-            placeholderTextColor="#9CA3AF"
-            className={`bg-gray-700 text-white text-lg p-4 rounded mb-2 ${
-              formik.touched.name && formik.errors.name
-                ? "border-2 border-red-500"
-                : ""
-            }`}
-            value={formik.values.name}
-            onChangeText={formik.handleChange("name")}
-            onBlur={formik.handleBlur("name")}
-          />
-          {formik.touched.name && formik.errors.name && (
-            <Text className="text-red-500 text-base mb-2">
-              {formik.errors.name}
-            </Text>
-          )}
-        </>
-      )}
-
-      {step === 1 && (
-        <>
-          <View className="bg-gray-700 rounded mb-2">
-            <Picker
-              selectedValue={formik.values.gender}
-              onValueChange={(itemValue) =>
-                formik.setFieldValue("gender", itemValue)
-              }
-              style={{ color: "#fff", backgroundColor: "transparent" }}
-              dropdownIconColor="#fff"
-              mode="dropdown"
-            >
-              <Picker.Item label="Select Gender" value="" color="#9CA3AF" />
-              <Picker.Item label="Male" value="male" color="#8450A0" />
-              <Picker.Item label="Female" value="female" color="#8450A0" />
-            </Picker>
+                    disabled={!values.birthDate || !!errors.birthDate}
+                  >
+                    <Text
+                      style={[
+                        styles.stepNavActive,
+                        (!values.birthDate || errors.birthDate) && {
+                          backgroundColor: "transparent",
+                        },
+                      ]}
+                    >
+                      Next
+                    </Text>
+                  </TouchableOpacity>
+                </Card>
+              );
+            case 3:
+              return (
+                <Card
+                  title="What are your concerns?"
+                  subTitle="Select all that apply"
+                  handleSubmit={undefined}
+                >
+                  <ProgressBar step={4} totalSteps={5} />
+                  <MultiSelect
+                    hideTags
+                    items={concernList.map((c: any) => ({
+                      id: c.id,
+                      name: c.title,
+                    }))}
+                    uniqueKey="id"
+                    onSelectedItemsChange={(items) =>
+                      setFieldValue("concern_ids", items)
+                    }
+                    selectedItems={values.concern_ids}
+                    selectText="Select Concerns"
+                    searchInputPlaceholderText="Search Concerns..."
+                    submitButtonText="Submit"
+                    styleDropdownMenuSubsection={{ backgroundColor: "#fff" }}
+                    styleMainWrapper={{ backgroundColor: "#fff" }}
+                    styleDropdownMenu={{ backgroundColor: "#fff" }}
+                    styleTextDropdownSelected={{
+                      color: "#8e44ad",
+                      fontSize: 16,
+                    }}
+                    styleTextDropdown={{ color: "#8e44ad", fontSize: 16 }}
+                    styleListContainer={{ backgroundColor: "#fff" }}
+                    styleRowList={{ backgroundColor: "#fff", borderRadius: 8 }}
+                    styleItemsContainer={{ backgroundColor: "#fff" }}
+                  />
+                  {touched.concern_ids && errors.concern_ids && (
+                    <Text style={{ color: "red", fontSize: 12, marginTop: 5 }}>
+                      {errors.concern_ids as string}
+                    </Text>
+                  )}
+                  <View style={{ height: 10 }} />
+                  <TouchableOpacity
+                    style={styles.backBtn}
+                    onPress={() => setStep(2)}
+                  >
+                    <Text style={styles.stepNavActive}>Prev</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[
+                      styles.backBtn,
+                      (values.concern_ids.length === 0 ||
+                        errors.concern_ids) && {
+                        backgroundColor: "#8d44ada6",
+                      },
+                    ]}
+                    onPress={() =>
+                      values.concern_ids.length > 0 &&
+                      !errors.concern_ids &&
+                      setStep(4)
+                    }
+                    disabled={
+                      values.concern_ids.length === 0 || !!errors.concern_ids
+                    }
+                  >
+                    <Text
+                      style={[
+                        styles.stepNavActive,
+                        (values.concern_ids.length === 0 ||
+                          errors.concern_ids) && {
+                          backgroundColor: "transparent",
+                        },
+                      ]}
+                    >
+                      Next
+                    </Text>
+                  </TouchableOpacity>
+                </Card>
+              );
+            case 4:
+              return (
+                <Card
+                  title="Almost there!"
+                  subTitle="Review your child's information before submitting."
+                  handleSubmit={handleSubmit}
+                  submitText={isSubmitting ? "Submitting..." : "Submit"}
+                >
+                  <Text
+                    style={{
+                      textAlign: "center",
+                      fontSize: 18,
+                      fontWeight: "600",
+                      marginBottom: 20,
+                    }}
+                  >
+                    Review &amp; Submit
+                  </Text>
+                  <Text style={{ marginBottom: 10 }}>
+                    Child&apos;s Name:{" "}
+                    <Text style={{ fontWeight: "bold" }}>{values.name}</Text>
+                  </Text>
+                  <Text style={{ marginBottom: 10 }}>
+                    Gender:{" "}
+                    <Text style={{ fontWeight: "bold" }}>{values.gender}</Text>
+                  </Text>
+                  <Text style={{ marginBottom: 10 }}>
+                    Birth Date:{" "}
+                    <Text style={{ fontWeight: "bold" }}>
+                      {values.birthDate}
+                    </Text>
+                  </Text>
+                  <Text style={{ marginBottom: 20 }}>
+                    Concerns:{" "}
+                    <Text style={{ fontWeight: "bold" }}>
+                      {values.concern_ids
+                        .map((id: string) => {
+                          const found = concernList.find(
+                            (c: any) => c.id === id
+                          );
+                          return found ? found.title : id;
+                        })
+                        .join(", ")}
+                    </Text>
+                  </Text>
+                  <TouchableOpacity
+                    style={styles.backBtn}
+                    onPress={() => setStep(3)}
+                  >
+                    <Text style={styles.stepNavActive}>Back</Text>
+                  </TouchableOpacity>
+                </Card>
+              );
+            default:
+              return null;
+          }
+        };
+        return (
+          <View style={styles.container}>
+            {step === -1 ? (
+              <View>
+                <View style={{ alignItems: "center", marginBottom: 32 }}>
+                  <Image
+                    source={require("@/assets/images/form-intro.png")}
+                    style={{ width: 200, height: 200, marginBottom: 20 }}
+                  />
+                  <Text style={styles.welcome} className="font-bold">
+                    Welcome to Numuw!
+                  </Text>
+                  <Text style={styles.info}>
+                    Your insight is key to helping us understand your child
+                    better. By answering these short questions, you’ll help us
+                    provide the best support and personalized care for your
+                    child’s Needs
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => setStep(0)}
+                    style={styles.tellUsBtn}
+                  >
+                    <Image
+                      source={require("@/assets/images/hand-gesture.png")}
+                    />
+                    <Text style={{ color: "#fff" }}>
+                      Tell Us About Your Child
+                    </Text>
+                    <Image
+                      source={require("@/assets/images/right-arrow.png")}
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            ) : (
+              <>
+                {renderStep()}
+                <View style={styles.stepNavContainer}>
+                  {[...Array(totalSteps)].map((_, idx) => {
+                    const isDisabled = !canGoToStep(idx);
+                    return (
+                      <Text
+                        key={idx}
+                        style={[
+                          styles.stepNav,
+                          step === idx && styles.stepNavActive,
+                          isDisabled && { opacity: 0.4 },
+                        ]}
+                        onPress={() => {
+                          if (!isDisabled) setStep(idx);
+                        }}
+                      >
+                        {idx + 1}
+                      </Text>
+                    );
+                  })}
+                </View>
+              </>
+            )}
           </View>
-          {formik.touched.gender && formik.errors.gender && (
-            <Text className="text-red-500 text-base mb-2">
-              {formik.errors.gender}
-            </Text>
-          )}
-        </>
-      )}
-
-      {step === 2 && (
-        <>
-          <TouchableOpacity
-            onPress={() => setShowDatePicker(true)}
-            className={`bg-gray-700 text-white text-lg p-4 rounded mb-2 justify-center ${
-              formik.touched.birthDate && formik.errors.birthDate
-                ? "border-2 border-red-500"
-                : ""
-            }`}
-            style={{ marginBottom: 8 }}
-          >
-            <Text className="text-white text-lg">
-              {formik.values.birthDate
-                ? formik.values.birthDate
-                : "Select Birth Date"}
-            </Text>
-          </TouchableOpacity>
-          {showDatePicker && (
-            <DateTimePicker
-              value={
-                formik.values.birthDate
-                  ? new Date(formik.values.birthDate)
-                  : new Date()
-              }
-              mode="date"
-              display="default"
-              onChange={(event, selectedDate) => {
-                setShowDatePicker(false);
-                if (selectedDate) {
-                  const iso = selectedDate.toISOString().split("T")[0];
-                  formik.setFieldValue("birthDate", iso);
-                }
-              }}
-              maximumDate={new Date()}
-            />
-          )}
-          {formik.touched.birthDate && formik.errors.birthDate && (
-            <Text className="text-red-500 text-base mb-2">
-              {formik.errors.birthDate}
-            </Text>
-          )}
-        </>
-      )}
-
-      {step === 3 && (
-        <>
-          <View
-            className={`bg-gray-700 rounded mb-2 p-2 ${
-              formik.touched.concern_ids && formik.errors.concern_ids
-                ? "border-2 border-red-500"
-                : ""
-            }`}
-          >
-            <MultiSelect
-              hideTags
-              items={concernItems}
-              uniqueKey="id"
-              displayKey="name"
-              onSelectedItemsChange={(items) => {
-                formik.setFieldValue("concern_ids", items);
-              }}
-              selectedItems={formik.values.concern_ids}
-              selectText="Select Concerns"
-              searchInputPlaceholderText="Search Concerns..."
-              submitButtonText="Submit"
-              styleDropdownMenuSubsection={{
-                backgroundColor: "#1F2937",
-              }}
-              styleMainWrapper={{
-                backgroundColor: "#1F2937",
-              }}
-              styleDropdownMenu={{
-                backgroundColor: "#1F2937",
-              }}
-              styleTextDropdownSelected={{
-                color: "#fff",
-                fontSize: 16,
-              }}
-              styleTextDropdown={{
-                color: "#fff",
-                fontSize: 16,
-              }}
-              styleListContainer={{
-                backgroundColor: "#1F2937",
-              }}
-              styleRowList={{
-                backgroundColor: "#1F2937",
-                borderRadius: 8,
-              }}
-              styleItemsContainer={{
-                backgroundColor: "#1F2937",
-                borderRadius: 8,
-              }}
-              styleIndicator={{
-                backgroundColor: "#1F2937",
-                borderRadius: 8,
-              }}
-              submitButtonColor="#8450A0"
-            />
-          </View>
-          {formik.touched.concern_ids && formik.errors.concern_ids && (
-            <Text className="text-red-500 text-base mb-2">
-              {formik.errors.concern_ids as string}
-            </Text>
-          )}
-        </>
-      )}
-
-      <View className="flex-row justify-between mt-4">
-        {step > 0 && (
-          <TouchableOpacity
-            onPress={() => setStep((s) => s - 1)}
-            className="bg-gray-600 p-3 rounded w-1/3 items-center"
-          >
-            <Text className="text-white text-lg">Back</Text>
-          </TouchableOpacity>
-        )}
-        <View className="flex-1" />
-        {step < 3 && (
-          <TouchableOpacity
-            onPress={async () => {
-              const valid = await validateStep();
-              if (valid) setStep((s) => s + 1);
-            }}
-            className="bg-purple-500 p-3 rounded w-1/3 items-center"
-          >
-            <Text className="text-white text-lg">Next</Text>
-          </TouchableOpacity>
-        )}
-        {step === 3 && (
-          <TouchableOpacity
-            disabled={loading}
-            onPress={formik.handleSubmit as () => void}
-            className={`bg-purple-500 p-3 rounded w-1/3 items-center ${
-              loading ? "opacity-50" : ""
-            }`}
-          >
-            <Text className="text-white text-lg">
-              {loading ? "Creating..." : "Submit"}
-            </Text>
-          </TouchableOpacity>
-        )}
-      </View>
-
-      {error && <Text className="text-red-500 text-base mt-4">{error}</Text>}
-    </View>
+        );
+      }}
+    </Formik>
   );
 }
+
+function StepThreeFormik({ value, error, onChange }: any) {
+  const [show, setShow] = React.useState(false);
+  return (
+    <>
+      <TouchableOpacity
+        style={{
+          borderWidth: 1,
+          borderColor: "#ccc",
+          borderRadius: 8,
+          padding: 12,
+          marginTop: 20,
+          marginBottom: 10,
+          alignItems: "center",
+        }}
+        onPress={() => setShow(true)}
+      >
+        <Text style={{ color: value ? "#222" : "#aaa" }}>
+          {value ? new Date(value).toDateString() : "Select birth date"}
+        </Text>
+      </TouchableOpacity>
+      {show && (
+        <DateTimePicker
+          value={value ? new Date(value) : new Date()}
+          mode="date"
+          display="default"
+          onChange={(_e, selectedDate) => {
+            setShow(false);
+            if (selectedDate)
+              onChange(selectedDate.toISOString().split("T")[0]);
+          }}
+          maximumDate={new Date()}
+        />
+      )}
+      {error && (
+        <Text style={{ color: "red", fontSize: 12, marginTop: 5 }}>
+          {error}
+        </Text>
+      )}
+    </>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, justifyContent: "center", padding: 20 },
+  tellUsBtn: {
+    marginTop: 20,
+    width: "80%",
+    backgroundColor: "#8450A0",
+    padding: 16,
+    borderRadius: 6,
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    justifyContent: "center",
+  },
+  welcome: {
+    fontSize: 32,
+    marginBottom: 20,
+    textAlign: "center",
+    color: "#1C1520",
+  },
+  info: {
+    textAlign: "center",
+    fontSize: 14,
+    color: "#545056",
+    marginBottom: 20,
+  },
+  stepNavContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 32,
+    gap: 12,
+  },
+
+  stepNav: {
+    fontSize: 18,
+    color: "#888",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    marginHorizontal: 4,
+    overflow: "hidden",
+  },
+  backBtn: {
+    backgroundColor: "#8e44ad",
+    paddingVertical: 12,
+    marginTop: 20,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  stepNavActive: {
+    color: "#fff",
+    backgroundColor: "#8e44ad",
+    borderColor: "#8e44ad",
+  },
+});

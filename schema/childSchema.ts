@@ -12,7 +12,7 @@ export const childInitialState = {
 
 export const childSchema = Yup.object().shape({
     name: Yup.string().required("Name is required"),
-    gender: Yup.mixed<"male" | "female">()
+    gender: Yup.mixed<"male" | "female" | "">()
         .oneOf(["male", "female"], "Invalid gender")
         .required("Gender is required"),
     birthDate: Yup.string().required("Birth date is required"),

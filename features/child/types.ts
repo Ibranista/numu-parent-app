@@ -13,11 +13,11 @@ export interface IChild {
     id?: string;
     name: string;
     gender: "male" | "female" | "";
-    birthDate: string;
+    birthDate: Date;
     concern_ids: string[];
-    concerns: IConcern[];
-    therapist_matches: ITherapistMatch[];
-    acceptedTherapists: any[];
+    concerns?: IConcern[];
+    therapist_matches?: ITherapistMatch[];
+    acceptedTherapists?: any[];
 };
 
 export interface ITherapist {

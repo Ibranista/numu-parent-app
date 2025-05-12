@@ -1,7 +1,7 @@
-import { IChildResponse } from "./types";
+import { IChildrenResponse } from "./types";
 
 interface ChildState {
-    child: IChildResponse | null;
+    child: IChildrenResponse | null;
     loading: boolean;
     error: string | null;
 }
