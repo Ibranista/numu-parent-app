@@ -16,7 +16,6 @@ export default function ChildScreen() {
   const dispatch = useAppDispatch();
   const childState = useAppSelector(selectChild);
   const concernsState = useAppSelector(selectConcerns);
-  console.log("concernsState", concernsState?.concerns?.results);
   const { loading, error } = childState ?? {};
   const concernItems = concernsState?.concerns?.results.map((item) => ({
     id: item.id,
@@ -304,7 +303,6 @@ export default function ChildScreen() {
                 borderRadius: 8,
               }}
               submitButtonColor="#8450A0"
-              onChangeInput={(text) => console.log(text)}
             />
           </View>
           {formik.touched.concern_ids && formik.errors.concern_ids && (
