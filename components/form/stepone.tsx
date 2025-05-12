@@ -1,107 +1,120 @@
-import { Formik } from "formik";
+import { IStepFormProps } from "@/Interface/childFormInterface";
+import { styles } from "@/styles/childFormStyle";
 import React from "react";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import * as Yup from "yup";
 import Card from "../Card";
 import ProgressBar from "./progressBar";
 
-interface StepOneProps {
-  onNext: (name: string) => void;
-  initialName?: string;
-}
-
-export default function StepOne({ onNext, initialName = "" }: StepOneProps) {
+export default function StepOne({
+  setStep,
+  values,
+  errors,
+  touched,
+  setFieldValue,
+}: IStepFormProps & {
+  setFieldValue: (field: string, value: any) => void;
+}) {
   return (
-    <Formik
-      initialValues={{ childName: initialName }}
-      validationSchema={Yup.object({
-        childName: Yup.string().required("Name is required"),
-      })}
-      onSubmit={(values) => onNext(values.childName)}
+    <Card
+      title="Now, select your child's gender."
+      subTitle="Gender"
+      handleSubmit={undefined}
     >
-      {({
-        handleChange,
-        handleBlur,
-        handleSubmit,
-        values,
-        errors,
-        touched,
-      }) => (
-        <Card
-          title={"Let&apos;s start with your child&apos;s name."}
-          subTitle={"Tell us about your child."}
-          handleSubmit={handleSubmit}
+      <ProgressBar step={2} totalSteps={5} />
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-around",
+          marginTop: 25,
+          marginBottom: 10,
+        }}
+      >
+        <TouchableOpacity
+          style={{
+            flexDirection: "column",
+            alignItems: "center",
+            padding: 10,
+            borderRadius: 12,
+            borderWidth: 1,
+            borderColor: values.gender === "male" ? "#8e44ad" : "#ccc",
+            width: 90,
+            backgroundColor: values.gender === "male" ? "#f7efff" : "#fff",
+          }}
+          onPress={() => setFieldValue("gender", "male")}
         >
-          <ProgressBar step={1} totalSteps={3} />
-          <Text style={styles.label}>Child&apos;s Name</Text>
-          <View style={styles.inputRow}>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter your child's name"
-              onChangeText={handleChange("childName")}
-              onBlur={handleBlur("childName")}
-              value={values.childName}
-            />
+          <Text
+            style={{
+              fontSize: 24,
+              color: values.gender === "male" ? "#8e44ad" : "#999",
+            }}
+          >
             <Icon
-              name="user"
-              size={20}
-              color="#ccc"
-              style={{ marginLeft: 10 }}
+              name="male"
+              size={24}
+              color={values.gender === "male" ? "#8e44ad" : "#999"}
             />
-          </View>
-          {touched.childName && errors.childName && (
-            <Text style={styles.error}>{errors.childName}</Text>
-          )}
-        </Card>
+          </Text>
+          <Text style={{ marginTop: 5, fontWeight: "500" }}>Male</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            flexDirection: "column",
+            alignItems: "center",
+            padding: 10,
+            borderRadius: 12,
+            borderWidth: 1,
+            borderColor: values.gender === "female" ? "#8e44ad" : "#ccc",
+            width: 90,
+            backgroundColor: values.gender === "female" ? "#f7efff" : "#fff",
+          }}
+          onPress={() => setFieldValue("gender", "female")}
+        >
+          <Text
+            style={{
+              fontSize: 24,
+              color: values.gender === "female" ? "#8e44ad" : "#999",
+            }}
+          >
+            <Icon
+              name="female"
+              size={24}
+              color={values.gender === "female" ? "#8e44ad" : "#999"}
+            />
+          </Text>
+          <Text style={{ marginTop: 5, fontWeight: "500" }}>Female</Text>
+        </TouchableOpacity>
+      </View>
+      {touched.gender && errors.gender && (
+        <Text style={{ color: "red", fontSize: 12, marginTop: 5 }}>
+          {errors.gender}
+        </Text>
       )}
-    </Formik>
+      <View style={{ height: 10 }} />
+      <TouchableOpacity style={styles.backBtn} onPress={() => setStep(0)}>
+        <Text style={styles.stepNavActive}>Prev</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[
+          styles.backBtn,
+          (!values.gender || errors.gender) && {
+            backgroundColor: "#8d44ada6",
+          },
+        ]}
+        onPress={() => values.gender && !errors.gender && setStep(2)}
+        disabled={!values.gender || !!errors.gender}
+      >
+        <Text
+          style={[
+            styles.stepNavActive,
+            (!values.gender || errors.gender) && {
+              backgroundColor: "transparent",
+            },
+          ]}
+        >
+          Next
+        </Text>
+      </TouchableOpacity>
+    </Card>
   );
 }
-
-const styles = StyleSheet.create({
-  progressBar: {
-    height: 6,
-    backgroundColor: "#eee",
-    borderRadius: 3,
-    marginBottom: 20,
-  },
-  progressFill: {
-    width: "10%",
-    height: 6,
-    backgroundColor: "#8e44ad",
-    borderRadius: 3,
-  },
-  label: {
-    marginBottom: 5,
-    fontWeight: "500",
-  },
-  inputRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#ccc",
-    paddingHorizontal: 10,
-    borderRadius: 8,
-  },
-  input: {
-    flex: 1,
-    height: 40,
-  },
-  nextButton: {
-    backgroundColor: "#8e44ad",
-    paddingVertical: 12,
-    marginTop: 20,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  nextText: {
-    color: "#fff",
-    fontWeight: "600",
-  },
-  error: {
-    color: "red",
-    fontSize: 12,
-    marginTop: 5,
-  },
-});
