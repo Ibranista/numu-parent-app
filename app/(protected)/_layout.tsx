@@ -9,12 +9,11 @@ import { useEffect } from "react";
 
 export default function ProtectedLayout() {
   const authUser = useAppSelector(selectAuthUser);
-
+  console.log("currentUser on protected route", authUser);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     const unsubscribe = onAuthChange(async (currentUser) => {
-      console.log("currentUser", currentUser);
       if (currentUser) {
         try {
           await dispatch(getUserProfile(currentUser.uid));
@@ -30,10 +29,9 @@ export default function ProtectedLayout() {
   }, [dispatch]);
 
   // Redirect based on auth state
-  if (!authUser?.user?.firebase_uid) {
+  if (!authUser?.user?.firebase_uid && !authUser?.user?.uid) {
     return <Redirect href={"/login"} />;
   }
-  console.log("authUser", authUser);
   return (
     <Stack>
       <Stack.Screen
