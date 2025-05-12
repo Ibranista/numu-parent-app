@@ -2,7 +2,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/stateHooks";
 import { loginInitialState, loginSchema } from "@/schema/authSchema";
 import { useRouter } from "expo-router";
 import { useFormik } from "formik";
-import React from "react";
+import React, { useEffect } from "react";
 import {
   ActivityIndicator,
   Text,
@@ -28,7 +28,7 @@ const Login: React.FC = () => {
     },
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (authUser?.user?.firebase_uid) {
       Toast.show({
         type: "success",
@@ -100,6 +100,16 @@ const Login: React.FC = () => {
       {error && (
         <Text className="text-red-500 text-base mt-4">Invalid Credentials</Text>
       )}
+
+      <Text className="text-gray-400 text-base mt-4">
+        Don&apos;t have an account?{" "}
+        <Text
+          className="text-purple-500 font-semibold"
+          onPress={() => router.push("/register")}
+        >
+          Register
+        </Text>
+      </Text>
     </View>
   );
 };
