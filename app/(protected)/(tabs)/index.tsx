@@ -1,17 +1,17 @@
 import { clearAuth } from "@/features/auth/authSlice";
 import { selectAuthUser } from "@/features/auth/selector";
 import { logout } from "@/firebaseConfig";
-import { AppDispatch, RootState } from "@/store/store";
+import { AppDispatch, persistor } from "@/store/store";
 import { Button, Image, Text, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function Index() {
-  const count = useSelector((state: RootState) => state.counter.value);
   const dispatch = useDispatch<AppDispatch>();
   const authUser = useSelector(selectAuthUser);
   const handleLogout = async () => {
     await logout();
     dispatch(clearAuth());
+    persistor.purge();
   };
 
   const firstName = authUser?.user?.first_name || "";
