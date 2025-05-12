@@ -4,10 +4,11 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import Card from "../Card";
 import ProgressBar from "./progressBar";
 
+type TGender = "male" | "female" | "";
 interface StepTwoProps {
   onBack: () => void;
-  onNext: (gender: string) => void;
-  initialGender?: string;
+  onNext: (gender: TGender) => void;
+  initialGender?: TGender;
 }
 
 export default function StepTwo({
@@ -15,7 +16,7 @@ export default function StepTwo({
   onNext,
   initialGender = "",
 }: StepTwoProps) {
-  const [gender, setGender] = React.useState<string>(initialGender);
+  const [gender, setGender] = React.useState<TGender>(initialGender);
 
   return (
     <Card title="Now, select your child's gender." subTitle="Gender">
@@ -36,19 +37,19 @@ export default function StepTwo({
               padding: 10,
               borderRadius: 12,
               borderWidth: 1,
-              borderColor: gender === "boy" ? "#8e44ad" : "#ccc",
+              borderColor: gender === "male" ? "#8e44ad" : "#ccc",
               width: 90,
-              backgroundColor: gender === "boy" ? "#f7efff" : "#fff",
+              backgroundColor: gender === "male" ? "#f7efff" : "#fff",
             },
           ]}
-          onPress={() => setGender("boy")}
+          onPress={() => setGender("male")}
         >
           <Icon
             name="male"
             size={24}
-            color={gender === "boy" ? "#8e44ad" : "#999"}
+            color={gender === "male" ? "#8e44ad" : "#999"}
           />
-          <Text style={{ marginTop: 5, fontWeight: "500" }}>Boy</Text>
+          <Text style={{ marginTop: 5, fontWeight: "500" }}>Male</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[
@@ -58,19 +59,19 @@ export default function StepTwo({
               padding: 10,
               borderRadius: 12,
               borderWidth: 1,
-              borderColor: gender === "girl" ? "#8e44ad" : "#ccc",
+              borderColor: gender === "female" ? "#8e44ad" : "#ccc",
               width: 90,
-              backgroundColor: gender === "girl" ? "#f7efff" : "#fff",
+              backgroundColor: gender === "female" ? "#f7efff" : "#fff",
             },
           ]}
-          onPress={() => setGender("girl")}
+          onPress={() => setGender("female")}
         >
           <Icon
             name="female"
             size={24}
-            color={gender === "girl" ? "#8e44ad" : "#999"}
+            color={gender === "female" ? "#8e44ad" : "#999"}
           />
-          <Text style={{ marginTop: 5, fontWeight: "500" }}>Girl</Text>
+          <Text style={{ marginTop: 5, fontWeight: "500" }}>Female</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.buttonRow}>
