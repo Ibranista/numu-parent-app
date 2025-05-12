@@ -1,6 +1,6 @@
 # Numu Parent App
 
-<!-- ![Numu Parent App Screenshot](./assets/images/wecare.png) -->
+![Numu Parent App Screenshot](./assets/images/NUMU_Screenshot.png)
 
 Numu Parent App is a modern mobile application for parents to manage their children, receive therapist matches live.
 
