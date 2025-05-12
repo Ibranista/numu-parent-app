@@ -5,6 +5,9 @@ export const childInitialState = {
     gender: "" as "male" | "female" | "",
     birthDate: "",
     concern_ids: [] as never[],
+    concerns: [],
+    therapist_matches: [],
+    acceptedTherapists: [],
 };
 
 export const childSchema = Yup.object().shape({

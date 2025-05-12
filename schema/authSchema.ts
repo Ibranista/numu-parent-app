@@ -6,6 +6,7 @@ export const initialState = {
     email: '',
     role: 'parent',
     password: '',
+    confirmPassword: '',
 }
 
 export const registerUserSchema = Yup.object({

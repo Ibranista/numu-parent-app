@@ -11,7 +11,6 @@ export const getUserProfile = createAsyncThunk(
     async (firebaseUid: string, thunkAPI) => {
         try {
             const response = await api.get(`${feature}/profile/${firebaseUid}/`);
-            console.log("user profile response", response.data);
             return response.data;
         } catch (error: any) {
             console.error("Error fetching user profile:", {
@@ -53,7 +52,6 @@ export const loginUser = createAsyncThunk(
         try {
             const { email, password } = loginData;
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            console.log("userCredential", userCredential);
             return {
                 uid: userCredential.user.uid,
                 email: userCredential.user.email,

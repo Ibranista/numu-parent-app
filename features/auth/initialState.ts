@@ -9,7 +9,7 @@ export const profileInitialState: IProfileState = {
 export const initialState: AuthState = {
     user: {
         uid: "",
-        role: "",
+        role: "user",
         email: "",
         first_name: "",
         last_name: "",
