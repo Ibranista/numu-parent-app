@@ -7,7 +7,10 @@ const authSlice = createSlice({
     initialState,
     reducers: {
         setUser(state, action) {
-            state.user = action.payload;
+            state.user = {
+                ...action.payload,
+                email: action.payload.email ?? "",
+            };
         },
         clearAuth(state) {
             state.user = null;
@@ -23,7 +26,10 @@ const authSlice = createSlice({
             })
             .addCase(registerUser.fulfilled, (state, action) => {
                 state.loading = false;
-                state.user = action.payload;
+                state.user = {
+                    ...action.payload,
+                    email: action.payload.email ?? "",
+                };
             })
             .addCase(registerUser.rejected, (state, action) => {
                 state.loading = false;
@@ -35,7 +41,10 @@ const authSlice = createSlice({
             })
             .addCase(loginUser.fulfilled, (state, action) => {
                 state.loading = false;
-                state.user = action.payload;
+                state.user = {
+                    ...action.payload,
+                    email: action.payload.email ?? "",
+                };
             })
             .addCase(loginUser.rejected, (state, action) => {
                 state.loading = false;
