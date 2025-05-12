@@ -15,7 +15,7 @@ export interface IChild {
     gender: "male" | "female" | "";
     birthDate: Date;
     concern_ids: string[];
-    concerns?: IConcern[];
+    concerns: IConcern[];
     therapist_matches?: ITherapistMatch[];
     acceptedTherapists?: any[];
 };

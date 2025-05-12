@@ -1,0 +1,58 @@
+import { IStepFormProps } from "@/Interface/childFormInterface";
+import { styles } from "@/styles/childFormStyle";
+import React from "react";
+import { Text, TouchableOpacity } from "react-native";
+import Card from "../Card";
+
+export default function FinalStep({
+  setStep,
+  values,
+  concernList,
+  handleSubmit,
+  isSubmitting,
+}: IStepFormProps) {
+  return (
+    <Card
+      title="Almost there!"
+      subTitle="Review your child's information before submitting."
+      handleSubmit={handleSubmit}
+      submitText={isSubmitting ? "Submitting..." : "Submit"}
+    >
+      <Text
+        style={{
+          textAlign: "center",
+          fontSize: 18,
+          fontWeight: "600",
+          marginBottom: 20,
+        }}
+      >
+        Review &amp; Submit
+      </Text>
+      <Text style={{ marginBottom: 10 }}>
+        Child&apos;s Name:{" "}
+        <Text style={{ fontWeight: "bold" }}>{values.name}</Text>
+      </Text>
+      <Text style={{ marginBottom: 10 }}>
+        Gender: <Text style={{ fontWeight: "bold" }}>{values.gender}</Text>
+      </Text>
+      <Text style={{ marginBottom: 10 }}>
+        Birth Date:{" "}
+        <Text style={{ fontWeight: "bold" }}>{values.birthDate}</Text>
+      </Text>
+      <Text style={{ marginBottom: 20 }}>
+        Concerns:{" "}
+        <Text style={{ fontWeight: "bold" }}>
+          {values.concern_ids
+            .map((id: string) => {
+              const found = concernList?.find((c: any) => c.id === id);
+              return found ? found.title : id;
+            })
+            .join(", ")}
+        </Text>
+      </Text>
+      <TouchableOpacity style={styles.backBtn} onPress={() => setStep(3)}>
+        <Text style={styles.stepNavActive}>Back</Text>
+      </TouchableOpacity>
+    </Card>
+  );
+}

@@ -1,86 +1,87 @@
-import DateTimePicker from "@react-native-community/datetimepicker";
+import { IStepFormProps } from "@/Interface/childFormInterface";
+import { styles } from "@/styles/childFormStyle";
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
+import MultiSelect from "react-native-multiple-select";
 import Card from "../Card";
 import ProgressBar from "./progressBar";
 
-interface StepThreeProps {
-  onBack: () => void;
-  onNext: (birthDate: Date) => void;
-  initialBirthDate?: Date | null;
-}
-
 export default function StepThree({
-  onBack,
-  onNext,
-  initialBirthDate = null,
-}: StepThreeProps) {
-  const [date, setDate] = React.useState<Date | null>(initialBirthDate);
-  const [show, setShow] = React.useState(false);
-
-  const handleChange = (_: any, selectedDate?: Date) => {
-    setShow(false);
-    if (selectedDate) setDate(selectedDate);
-  };
-
+  setStep,
+  values,
+  errors,
+  concernList,
+  touched,
+  setFieldValue,
+}: IStepFormProps & {
+  setFieldValue: (field: string, value: any) => void;
+}) {
   return (
-    <Card title="When was your child born?" subTitle="Birth Date">
-      <ProgressBar step={3} totalSteps={5} />
-      <TouchableOpacity style={styles.dateInput} onPress={() => setShow(true)}>
-        <Text style={{ color: date ? "#222" : "#aaa" }}>
-          {date ? date.toDateString() : "Select birth date"}
-        </Text>
-      </TouchableOpacity>
-      {show && (
-        <DateTimePicker
-          value={date || new Date()}
-          mode="date"
-          display="default"
-          onChange={handleChange}
-          maximumDate={new Date()}
+    <Card
+      title="What are your concerns?"
+      subTitle="Select all that apply"
+      handleSubmit={undefined}
+    >
+      <ProgressBar step={4} totalSteps={5} />
+      {concernList && concernList.length > 0 && (
+        <MultiSelect
+          hideTags
+          items={concernList.map((c: any) => ({
+            id: c.id,
+            name: c.title,
+          }))}
+          uniqueKey="id"
+          onSelectedItemsChange={(items) => setFieldValue("concern_ids", items)}
+          selectedItems={values.concern_ids}
+          selectText="Select Concerns"
+          searchInputPlaceholderText="Search Concerns..."
+          submitButtonText="Submit"
+          styleDropdownMenuSubsection={{ backgroundColor: "#fff" }}
+          styleMainWrapper={{ backgroundColor: "#fff" }}
+          styleDropdownMenu={{ backgroundColor: "#fff" }}
+          styleTextDropdownSelected={{
+            color: "#8e44ad",
+            fontSize: 16,
+          }}
+          styleTextDropdown={{ color: "#8e44ad", fontSize: 16 }}
+          styleListContainer={{ backgroundColor: "#fff" }}
+          styleRowList={{ backgroundColor: "#fff", borderRadius: 8 }}
+          styleItemsContainer={{ backgroundColor: "#fff" }}
         />
       )}
-      <View style={styles.buttonRow}>
-        <TouchableOpacity style={styles.navButton} onPress={onBack}>
-          <Text style={styles.navButtonText}>Prev</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.navButton, { marginLeft: 8 }]}
-          onPress={() => date && onNext(date)}
+
+      {touched?.concern_ids && errors?.concern_ids && (
+        <Text style={{ color: "red", fontSize: 12, marginTop: 5 }}>
+          {errors?.concern_ids as string}
+        </Text>
+      )}
+      <View style={{ height: 10 }} />
+      <TouchableOpacity style={styles.backBtn} onPress={() => setStep(2)}>
+        <Text style={styles.stepNavActive}>Prev</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[
+          styles.backBtn,
+          (values.concern_ids.length === 0 || errors?.concern_ids) && {
+            backgroundColor: "#8d44ada6",
+          },
+        ]}
+        onPress={() =>
+          values.concern_ids.length > 0 && !errors?.concern_ids && setStep(4)
+        }
+        disabled={values.concern_ids.length === 0 || !!errors?.concern_ids}
+      >
+        <Text
+          style={[
+            styles.stepNavActive,
+            (values.concern_ids.length === 0 || errors?.concern_ids) && {
+              backgroundColor: "transparent",
+            },
+          ]}
         >
-          <Text style={styles.navButtonText}>Next</Text>
-        </TouchableOpacity>
-      </View>
+          Next
+        </Text>
+      </TouchableOpacity>
     </Card>
   );
 }
-
-const styles = StyleSheet.create({
-  dateInput: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    padding: 12,
-    marginTop: 20,
-    marginBottom: 10,
-    alignItems: "center",
-  },
-  buttonRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 20,
-  },
-  navButton: {
-    backgroundColor: "#8e44ad",
-    paddingVertical: 8,
-    paddingHorizontal: 18,
-    borderRadius: 8,
-    alignItems: "center",
-    minWidth: 80,
-  },
-  navButtonText: {
-    color: "#fff",
-    fontWeight: "600",
-    fontSize: 15,
-  },
-});

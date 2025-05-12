@@ -85,9 +85,9 @@ export default function StepOne({
           <Text style={{ marginTop: 5, fontWeight: "500" }}>Female</Text>
         </TouchableOpacity>
       </View>
-      {touched.gender && errors.gender && (
+      {touched?.gender && errors?.gender && (
         <Text style={{ color: "red", fontSize: 12, marginTop: 5 }}>
-          {errors.gender}
+          {errors?.gender}
         </Text>
       )}
       <View style={{ height: 10 }} />
@@ -97,17 +97,17 @@ export default function StepOne({
       <TouchableOpacity
         style={[
           styles.backBtn,
-          (!values.gender || errors.gender) && {
+          (!values.gender || errors?.gender) && {
             backgroundColor: "#8d44ada6",
           },
         ]}
-        onPress={() => values.gender && !errors.gender && setStep(2)}
-        disabled={!values.gender || !!errors.gender}
+        onPress={() => values.gender && !errors?.gender && setStep(2)}
+        disabled={!values.gender || !!errors?.gender}
       >
         <Text
           style={[
             styles.stepNavActive,
-            (!values.gender || errors.gender) && {
+            (!values.gender || errors?.gender) && {
               backgroundColor: "transparent",
             },
           ]}

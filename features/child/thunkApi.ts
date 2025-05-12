@@ -1,6 +1,6 @@
 import api from "@/services/apiService";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { IChild, IChildrenResponse, IGetChildrenArgs } from "./types";
+import { IChildrenResponse, IGetChildrenArgs } from "./types";
 
 const feature = "/children";
 
@@ -23,7 +23,7 @@ export const getChildren = createAsyncThunk<
 
 export const createChild = createAsyncThunk(
     "child/createChild",
-    async (childData: IChild, thunkAPI) => {
+    async (childData: any, thunkAPI) => {
         console.log("create called with", childData);
         try {
             const response = await api.post(`${feature}/`, childData);
