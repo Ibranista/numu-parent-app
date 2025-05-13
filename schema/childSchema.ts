@@ -32,4 +32,7 @@ export const childSchema = Yup.object().shape({
         ]))
         .min(1, "Select at least one language")
         .required("At least one language is required"),
+    has_emotional_distress_signs: Yup.boolean()
+        .typeError("Please select Yes or No")
+        .required("Please select Yes or No"),
 });

@@ -2,6 +2,7 @@ import FinalStep from "@/components/form/finalStep";
 import StepOne from "@/components/form/FirstStep";
 import InitialStep from "@/components/form/initialStep";
 import LanguageStep from "@/components/form/LanguageStep";
+import MyChildBehavior from "@/components/form/MyChildBehavior";
 import StepThree from "@/components/form/stepthree";
 import StepThreeFormik from "@/components/form/stepThreeFormik";
 import StepTwo from "@/components/form/steptwo";
@@ -19,7 +20,7 @@ import Toast from "react-native-toast-message";
 export default function App() {
   const dispatch = useAppDispatch();
   const concernData = useAppSelector(selectConcerns);
-  const totalSteps = 6;
+  const totalSteps = 7;
   const [step, setStep] = useState(-1);
 
   useEffect(() => {
@@ -34,6 +35,7 @@ export default function App() {
         birthDate: "",
         concern_ids: [],
         languages: [],
+        has_emotional_distress_signs: undefined,
       }}
       validationSchema={childSchema}
       onSubmit={async (values, { setSubmitting, resetForm }) => {
@@ -43,6 +45,8 @@ export default function App() {
             birthDate: values.birthDate as unknown as Date,
             concern_ids: values.concern_ids,
             name: values.name,
+            has_emotional_distress_signs: values.has_emotional_distress_signs,
+            languages: values.languages,
           })
         );
         setSubmitting(false);
@@ -99,6 +103,19 @@ export default function App() {
               values.languages.length > 0 &&
               !errors.concern_ids &&
               !errors.languages
+            );
+          if (idx === 6)
+            return (
+              values.name &&
+              values.gender &&
+              values.birthDate &&
+              values.concern_ids.length > 0 &&
+              values.languages &&
+              values.languages.length > 0 &&
+              typeof values.has_emotional_distress_signs === "boolean" &&
+              !errors.concern_ids &&
+              !errors.languages &&
+              !errors.has_emotional_distress_signs
             );
           return false;
         };
@@ -160,6 +177,16 @@ export default function App() {
                 />
               );
             case 5:
+              return (
+                <MyChildBehavior
+                  setStep={setStep}
+                  values={values}
+                  errors={errors}
+                  touched={touched}
+                  setFieldValue={setFieldValue}
+                />
+              );
+            case 6:
               return (
                 <FinalStep
                   setStep={setStep}

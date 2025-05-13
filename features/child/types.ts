@@ -17,6 +17,7 @@ export interface IChild {
     concern_ids: string[];
     concerns: IConcern[];
     languages: string[];
+    has_emotional_distress_signs?: boolean;
     therapist_matches?: ITherapistMatch[];
     acceptedTherapists?: any[];
 };
