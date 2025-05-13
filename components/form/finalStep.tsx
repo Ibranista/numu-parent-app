@@ -109,8 +109,15 @@ export default function FinalStep({
             {values.has_learning_problems ? "Yes" : "No"}
           </Text>
         </Text>
+        {/* trouble communication */}
+        <Text style={{ marginBottom: 20 }}>
+          Trouble Communication:{" "}
+          <Text style={{ fontWeight: "bold" }}>
+            {values.has_communication_problems ? "Yes" : "No"}
+          </Text>
+        </Text>
       </ScrollView>
-      <TouchableOpacity style={styles.backBtn} onPress={() => setStep(10)}>
+      <TouchableOpacity style={styles.backBtn} onPress={() => setStep(11)}>
         <Text style={styles.stepNavActive}>Back</Text>
       </TouchableOpacity>
     </Card>

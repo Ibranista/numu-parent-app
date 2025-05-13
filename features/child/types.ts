@@ -23,6 +23,7 @@ export interface IChild {
     child_activeness?: boolean;
     has_difficulty_movement?: boolean;
     has_learning_problems?: boolean;
+    has_communication_problems?: boolean;
     therapist_matches?: ITherapistMatch[];
     acceptedTherapists?: any[];
 };
