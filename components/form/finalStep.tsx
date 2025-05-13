@@ -50,7 +50,13 @@ export default function FinalStep({
             .join(", ")}
         </Text>
       </Text>
-      <TouchableOpacity style={styles.backBtn} onPress={() => setStep(3)}>
+      <Text style={{ marginBottom: 20 }}>
+        Languages:{" "}
+        <Text style={{ fontWeight: "bold" }}>
+          {values.languages.join(", ")}
+        </Text>
+      </Text>
+      <TouchableOpacity style={styles.backBtn} onPress={() => setStep(4)}>
         <Text style={styles.stepNavActive}>Back</Text>
       </TouchableOpacity>
     </Card>

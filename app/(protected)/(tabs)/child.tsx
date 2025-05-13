@@ -1,6 +1,7 @@
 import FinalStep from "@/components/form/finalStep";
 import StepOne from "@/components/form/FirstStep";
 import InitialStep from "@/components/form/initialStep";
+import LanguageStep from "@/components/form/LanguageStep";
 import StepThree from "@/components/form/stepthree";
 import StepThreeFormik from "@/components/form/stepThreeFormik";
 import StepTwo from "@/components/form/steptwo";
@@ -32,6 +33,7 @@ export default function App() {
         gender: "",
         birthDate: "",
         concern_ids: [],
+        languages: [],
       }}
       validationSchema={childSchema}
       onSubmit={async (values, { setSubmitting, resetForm }) => {
@@ -87,6 +89,17 @@ export default function App() {
               values.concern_ids.length > 0 &&
               !errors.concern_ids
             );
+          if (idx === 5)
+            return (
+              values.name &&
+              values.gender &&
+              values.birthDate &&
+              values.concern_ids.length > 0 &&
+              values.languages &&
+              values.languages.length > 0 &&
+              !errors.concern_ids &&
+              !errors.languages
+            );
           return false;
         };
         // Render steps
@@ -136,9 +149,17 @@ export default function App() {
                   setFieldValue={setFieldValue}
                 />
               );
-            case 5:
-              return <Text>Hello</Text>;
             case 4:
+              return (
+                <LanguageStep
+                  setStep={setStep}
+                  values={values}
+                  errors={errors}
+                  touched={touched}
+                  setFieldValue={setFieldValue}
+                />
+              );
+            case 5:
               return (
                 <FinalStep
                   setStep={setStep}

@@ -17,4 +17,19 @@ export const childSchema = Yup.object().shape({
         .required("Gender is required"),
     birthDate: Yup.string().required("Birth date is required"),
     concern_ids: Yup.array().of(Yup.number()).required("At least one concern is required"),
+    languages: Yup.array()
+        .of(Yup.string().oneOf([
+            "arabic",
+            "english",
+            "french",
+            "spanish",
+            "hindi",
+            "bengali",
+            "tagalog",
+            "urdu",
+            "farsi",
+            "other"
+        ]))
+        .min(1, "Select at least one language")
+        .required("At least one language is required"),
 });

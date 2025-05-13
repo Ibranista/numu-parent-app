@@ -16,6 +16,7 @@ export interface IChild {
     birthDate: Date;
     concern_ids: string[];
     concerns: IConcern[];
+    languages: string[];
     therapist_matches?: ITherapistMatch[];
     acceptedTherapists?: any[];
 };
