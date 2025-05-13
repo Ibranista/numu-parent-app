@@ -1,4 +1,5 @@
 import BehaviorChallenging from "@/components/form/BehaviorChallenging";
+import ChildActiveness from "@/components/form/ChildActiveness";
 import FinalStep from "@/components/form/finalStep";
 import StepOne from "@/components/form/FirstStep";
 import InitialStep from "@/components/form/initialStep";
@@ -7,6 +8,7 @@ import MyChildBehavior from "@/components/form/MyChildBehavior";
 import StepThree from "@/components/form/stepthree";
 import StepThreeFormik from "@/components/form/stepThreeFormik";
 import StepTwo from "@/components/form/steptwo";
+import StruggleWithSocialSituation from "@/components/form/StruggleWithSocialSituation";
 import { createChild } from "@/features/child/thunkApi";
 import { selectConcerns } from "@/features/concerns/selector";
 import { getConcerns } from "@/features/concerns/thunk.api";
@@ -21,7 +23,7 @@ import Toast from "react-native-toast-message";
 export default function App() {
   const dispatch = useAppDispatch();
   const concernData = useAppSelector(selectConcerns);
-  const totalSteps = 8;
+  const totalSteps = 10;
   const [step, setStep] = useState(-1);
 
   useEffect(() => {
@@ -38,6 +40,8 @@ export default function App() {
         languages: [],
         has_emotional_distress_signs: undefined,
         is_behavior_challenging: undefined,
+        struggle_with_social: undefined,
+        child_activeness: undefined,
       }}
       validationSchema={childSchema}
       onSubmit={async (values, { setSubmitting, resetForm }) => {
@@ -50,6 +54,8 @@ export default function App() {
             has_emotional_distress_signs: values.has_emotional_distress_signs,
             is_behavior_challenging: values.is_behavior_challenging,
             languages: values.languages,
+            struggle_with_social: values.struggle_with_social,
+            child_activeness: values.child_activeness,
           })
         );
         setSubmitting(false);
@@ -135,6 +141,42 @@ export default function App() {
               !errors.has_emotional_distress_signs &&
               !errors.is_behavior_challenging
             );
+          if (idx === 8)
+            return (
+              values.name &&
+              values.gender &&
+              values.birthDate &&
+              values.concern_ids.length > 0 &&
+              values.languages &&
+              values.languages.length > 0 &&
+              typeof values.has_emotional_distress_signs === "boolean" &&
+              typeof values.is_behavior_challenging === "boolean" &&
+              typeof values.struggle_with_social === "boolean" &&
+              !errors.concern_ids &&
+              !errors.languages &&
+              !errors.has_emotional_distress_signs &&
+              !errors.is_behavior_challenging &&
+              !errors.struggle_with_social
+            );
+          if (idx === 9)
+            return (
+              values.name &&
+              values.gender &&
+              values.birthDate &&
+              values.concern_ids.length > 0 &&
+              values.languages &&
+              values.languages.length > 0 &&
+              typeof values.has_emotional_distress_signs === "boolean" &&
+              typeof values.is_behavior_challenging === "boolean" &&
+              typeof values.struggle_with_social === "boolean" &&
+              typeof values.child_activeness === "boolean" &&
+              !errors.concern_ids &&
+              !errors.languages &&
+              !errors.has_emotional_distress_signs &&
+              !errors.is_behavior_challenging &&
+              !errors.struggle_with_social &&
+              !errors.child_activeness
+            );
           return false;
         };
         // Render steps
@@ -215,6 +257,26 @@ export default function App() {
                 />
               );
             case 7:
+              return (
+                <StruggleWithSocialSituation
+                  setStep={setStep}
+                  values={values}
+                  errors={errors}
+                  touched={touched}
+                  setFieldValue={setFieldValue}
+                />
+              );
+            case 8:
+              return (
+                <ChildActiveness
+                  setStep={setStep}
+                  values={values}
+                  errors={errors}
+                  touched={touched}
+                  setFieldValue={setFieldValue}
+                />
+              );
+            case 9:
               return (
                 <FinalStep
                   setStep={setStep}

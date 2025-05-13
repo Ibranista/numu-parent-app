@@ -19,6 +19,8 @@ export interface IChild {
     languages: string[];
     has_emotional_distress_signs?: boolean;
     is_behavior_challenging?: boolean;
+    struggle_with_social?: boolean;
+    child_activeness?: boolean;
     therapist_matches?: ITherapistMatch[];
     acceptedTherapists?: any[];
 };
