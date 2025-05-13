@@ -26,6 +26,18 @@ export default function StepTwo({
     >
       <ProgressBar step={3} totalSteps={5} />
       {children}
+      <View className="flex-row items-center">
+        <Image source={require("@/assets/images/MagicStarIcon.png")} />
+        <Text style={{ color: "#545056" }} className="ml-2">
+          Age-appropriate activities
+        </Text>
+      </View>
+      <View className="flex-row items-center mt-2">
+        <Image source={require("@/assets/images/ActivityIcon.png")} />
+        <Text style={{ color: "#545056" }} className="ml-2">
+          Personalized learning path
+        </Text>
+      </View>
       <View style={{ height: 10 }} />
       <StepBtnBox>
         <TouchableOpacity
