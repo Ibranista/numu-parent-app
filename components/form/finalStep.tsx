@@ -116,8 +116,15 @@ export default function FinalStep({
             {values.has_communication_problems ? "Yes" : "No"}
           </Text>
         </Text>
+        {/* meal issues */}
+        <Text style={{ marginBottom: 20 }}>
+          Meal Issues:{" "}
+          <Text style={{ fontWeight: "bold" }}>
+            {values.has_meal_problems ? "Yes" : "No"}
+          </Text>
+        </Text>
       </ScrollView>
-      <TouchableOpacity style={styles.backBtn} onPress={() => setStep(11)}>
+      <TouchableOpacity style={styles.backBtn} onPress={() => setStep(12)}>
         <Text style={styles.stepNavActive}>Back</Text>
       </TouchableOpacity>
     </Card>
