@@ -1,6 +1,7 @@
+import { options } from "@/constants/stepForm";
 import { IStepFormProps } from "@/Interface/childFormInterface";
 import { styles } from "@/styles/childFormStyle";
-import React from "react";
+import React, { useCallback } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Card from "../Card";
 import StepBtnBox from "../StepBtnBox";
@@ -15,6 +16,21 @@ export default function BehaviorChallenging({
 }: IStepFormProps & {
   setFieldValue: (field: string, value: any) => void;
 }) {
+  const selectedValue = values.is_behavior_challenging;
+
+  const handleSelect = useCallback(
+    (value: boolean) => {
+      setFieldValue("is_behavior_challenging", value);
+    },
+    [setFieldValue]
+  );
+
+  const hasError =
+    touched?.is_behavior_challenging && errors?.is_behavior_challenging;
+
+  const disableNext =
+    typeof selectedValue !== "boolean" || !!errors?.is_behavior_challenging;
+
   return (
     <Card
       title="My child’s "
@@ -28,19 +44,14 @@ export default function BehaviorChallenging({
         />
       )}
     >
-      <ProgressBar step={7} totalSteps={8} />
+      <ProgressBar step={7} totalSteps={16} />
       <View style={stylesToggle.toggleContainer}>
-        {[
-          { label: "Yes", value: true },
-          { label: "No", value: false },
-        ].map((option) => {
-          const isSelected = values.is_behavior_challenging === option.value;
+        {options.map((option) => {
+          const isSelected = selectedValue === option.value;
           return (
             <TouchableOpacity
               key={option.label}
-              onPress={() =>
-                setFieldValue("is_behavior_challenging", option.value)
-              }
+              onPress={() => handleSelect(option.value)}
               style={[
                 stylesToggle.toggleButton,
                 isSelected && stylesToggle.toggleButtonSelected,
@@ -48,9 +59,7 @@ export default function BehaviorChallenging({
               activeOpacity={0.8}
             >
               <View style={stylesToggle.iconCircle}>
-                <Text style={{ color: "#fff", fontSize: 12 }}>
-                  {option.value ? "✔" : "✖"}
-                </Text>
+                <Image source={option.icon} style={{ width: 20, height: 20 }} />
               </View>
               <Text
                 style={[
@@ -64,7 +73,7 @@ export default function BehaviorChallenging({
           );
         })}
       </View>
-      {touched?.is_behavior_challenging && errors?.is_behavior_challenging && (
+      {hasError && (
         <Text style={{ color: "red", fontSize: 12, marginTop: 5 }}>
           {errors.is_behavior_challenging as string}
         </Text>
@@ -84,26 +93,17 @@ export default function BehaviorChallenging({
           style={[
             styles.backBtn,
             { paddingVertical: 6, paddingHorizontal: 12, flex: 1 },
-            (typeof values.is_behavior_challenging !== "boolean" ||
-              errors?.is_behavior_challenging) && {
+            disableNext && {
               backgroundColor: "#8d44ada6",
             },
           ]}
-          onPress={() =>
-            typeof values.is_behavior_challenging === "boolean" &&
-            !errors?.is_behavior_challenging &&
-            setStep(7)
-          }
-          disabled={
-            typeof values.is_behavior_challenging !== "boolean" ||
-            !!errors?.is_behavior_challenging
-          }
+          onPress={() => !disableNext && setStep(7)}
+          disabled={disableNext}
         >
           <Text
             style={[
               styles.stepNavActive,
-              (typeof values.is_behavior_challenging !== "boolean" ||
-                errors?.is_behavior_challenging) && {
+              disableNext && {
                 backgroundColor: "transparent",
               },
             ]}
@@ -136,7 +136,8 @@ const stylesToggle = StyleSheet.create({
     backgroundColor: "#fff",
   },
   toggleButtonSelected: {
-    borderColor: "#8e44ad",
+    borderColor: "#f0e7ff",
+    backgroundColor: "#8e44ad",
   },
   iconCircle: {
     width: 24,
@@ -153,5 +154,6 @@ const stylesToggle = StyleSheet.create({
   },
   toggleTextSelected: {
     fontWeight: "600",
+    color: "#fff",
   },
 });

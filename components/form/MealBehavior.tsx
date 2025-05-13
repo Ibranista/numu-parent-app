@@ -1,6 +1,7 @@
+import { options } from "@/constants/stepForm";
 import { IStepFormProps } from "@/Interface/childFormInterface";
 import { styles } from "@/styles/childFormStyle";
-import React from "react";
+import React, { useCallback } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Card from "../Card";
 import StepBtnBox from "../StepBtnBox";
@@ -15,6 +16,14 @@ export default function MealBehavior({
 }: IStepFormProps & {
   setFieldValue: (field: string, value: any) => void;
 }) {
+  const selectedValue = values.has_meal_problems;
+
+  const handleSelect = useCallback(
+    (value: boolean) => {
+      setFieldValue("has_meal_problems", value);
+    },
+    [setFieldValue]
+  );
   return (
     <Card
       title="My Child"
@@ -27,17 +36,14 @@ export default function MealBehavior({
         />
       )}
     >
-      <ProgressBar step={13} totalSteps={14} />
+      <ProgressBar step={13} totalSteps={16} />
       <View style={stylesToggle.toggleContainer}>
-        {[
-          { label: "Yes", value: true },
-          { label: "No", value: false },
-        ].map((option) => {
-          const isSelected = values.has_meal_problems === option.value;
+        {options.map((option) => {
+          const isSelected = selectedValue === option.value;
           return (
             <TouchableOpacity
               key={option.label}
-              onPress={() => setFieldValue("has_meal_problems", option.value)}
+              onPress={() => handleSelect(option.value)}
               style={[
                 stylesToggle.toggleButton,
                 isSelected && stylesToggle.toggleButtonSelected,
@@ -45,9 +51,7 @@ export default function MealBehavior({
               activeOpacity={0.8}
             >
               <View style={stylesToggle.iconCircle}>
-                <Text style={{ color: "#fff", fontSize: 12 }}>
-                  {option.value ? "✔" : "✖"}
-                </Text>
+                <Image source={option.icon} style={{ width: 20, height: 20 }} />
               </View>
               <Text
                 style={[
@@ -133,7 +137,8 @@ const stylesToggle = StyleSheet.create({
     backgroundColor: "#fff",
   },
   toggleButtonSelected: {
-    borderColor: "#8e44ad",
+    borderColor: "#f0e7ff",
+    backgroundColor: "#8e44ad",
   },
   iconCircle: {
     width: 24,
@@ -150,5 +155,6 @@ const stylesToggle = StyleSheet.create({
   },
   toggleTextSelected: {
     fontWeight: "600",
+    color: "#fff",
   },
 });

@@ -3,6 +3,7 @@ import { styles } from "@/styles/childFormStyle";
 import React from "react";
 import { ScrollView, Text, TouchableOpacity } from "react-native";
 import Card from "../Card";
+import { renderField } from "../ui/Morefields";
 
 export default function FinalStep({
   setStep,
@@ -11,6 +12,69 @@ export default function FinalStep({
   handleSubmit,
   isSubmitting,
 }: IStepFormProps) {
+  const getConcernTitles = () => {
+    return values.concern_ids
+      .map(
+        (id: string) => concernList?.find((c: any) => c.id === id)?.title || id
+      )
+      .join(", ");
+  };
+
+  const reviewFields = [
+    { label: "Child's Name", value: values.name, key: "name" },
+    { label: "Gender", value: values.gender, key: "gender" },
+    { label: "Birth Date", value: values.birthDate, key: "birthDate" },
+    { label: "Concerns", value: getConcernTitles(), key: "concerns" },
+    { label: "Languages", value: values.languages, key: "languages" },
+    {
+      label: "Emotional Distress Signs",
+      value: values.has_emotional_distress_signs,
+      key: "emotionalDistress",
+    },
+    {
+      label: "Child Behavior",
+      value: values.is_behavior_challenging,
+      key: "behavior",
+    },
+    {
+      label: "Can be challenging",
+      value: values.is_behavior_challenging,
+      key: "challenging",
+    },
+    {
+      label: "Struggle with social",
+      value: values.struggle_with_social,
+      key: "socialStruggle",
+    },
+    {
+      label: "Child Activeness",
+      value: values.child_activeness,
+      key: "activeness",
+    },
+    {
+      label: "Difficulty Movement",
+      value: values.has_difficulty_movement,
+      key: "movement",
+    },
+    {
+      label: "Trouble Learning",
+      value: values.has_learning_problems,
+      key: "learning",
+    },
+    {
+      label: "Trouble Communication",
+      value: values.has_communication_problems,
+      key: "communication",
+    },
+    { label: "Meal Issues", value: values.has_meal_problems, key: "meals" },
+    {
+      label: "Sleep Issues",
+      value: values.has_difficulty_with_sleep,
+      key: "sleep",
+    },
+    { label: "Extra", value: values.did_we_miss_anything, key: "extra" },
+  ];
+
   return (
     <Card
       title="Almost there!"
@@ -26,119 +90,19 @@ export default function FinalStep({
           marginBottom: 20,
         }}
       >
-        Review &amp; Submit
+        Review & Submit
       </Text>
+
       <ScrollView
         style={{ maxHeight: 200 }}
         showsVerticalScrollIndicator={true}
       >
-        <Text style={{ marginBottom: 10 }}>
-          Child&apos;s Name:{" "}
-          <Text style={{ fontWeight: "bold" }}>{values.name}</Text>
-        </Text>
-        <Text style={{ marginBottom: 10 }}>
-          Gender: <Text style={{ fontWeight: "bold" }}>{values.gender}</Text>
-        </Text>
-        <Text style={{ marginBottom: 10 }}>
-          Birth Date:{" "}
-          <Text style={{ fontWeight: "bold" }}>{values.birthDate}</Text>
-        </Text>
-        <Text style={{ marginBottom: 20 }}>
-          Concerns:{" "}
-          <Text style={{ fontWeight: "bold" }}>
-            {values.concern_ids
-              .map((id: string) => {
-                const found = concernList?.find((c: any) => c.id === id);
-                return found ? found.title : id;
-              })
-              .join(", ")}
-          </Text>
-        </Text>
-        <Text style={{ marginBottom: 20 }}>
-          Languages:{" "}
-          <Text style={{ fontWeight: "bold" }}>
-            {values.languages.join(", ")}
-          </Text>
-        </Text>
-        {/* emotional distress signs */}
-        <Text style={{ marginBottom: 20 }}>
-          Emotional Distress Signs:{" "}
-          <Text style={{ fontWeight: "bold" }}>
-            {values.has_emotional_distress_signs ? "Yes" : "No"}
-          </Text>
-        </Text>
-        {/* child behavior */}
-        <Text style={{ marginBottom: 20 }}>
-          Child Behavior:{" "}
-          <Text style={{ fontWeight: "bold" }}>
-            {values.is_behavior_challenging ? "Yes" : "No"}
-          </Text>
-        </Text>
-        {/* Can be challenging */}
-        <Text style={{ marginBottom: 20 }}>
-          Can be challenging:{" "}
-          <Text style={{ fontWeight: "bold" }}>
-            {values.is_behavior_challenging ? "Yes" : "No"}
-          </Text>
-        </Text>
-        {/* Struggle with social */}
-        <Text style={{ marginBottom: 20 }}>
-          Struggle with social:{" "}
-          <Text style={{ fontWeight: "bold" }}>
-            {values.struggle_with_social ? "Yes" : "No"}
-          </Text>
-        </Text>
-        {/* child activness */}
-        <Text style={{ marginBottom: 20 }}>
-          Child Activeness:{" "}
-          <Text style={{ fontWeight: "bold" }}>
-            {values.child_activeness ? "Yes" : "No"}
-          </Text>
-        </Text>
-        {/* child difficulty movement */}
-        <Text style={{ marginBottom: 20 }}>
-          Difficulty Movement:{" "}
-          <Text style={{ fontWeight: "bold" }}>
-            {values.has_difficulty_movement ? "Yes" : "No"}
-          </Text>
-        </Text>
-        {/* has trouble learning */}
-        <Text style={{ marginBottom: 20 }}>
-          Trouble Learning:{" "}
-          <Text style={{ fontWeight: "bold" }}>
-            {values.has_learning_problems ? "Yes" : "No"}
-          </Text>
-        </Text>
-        {/* trouble communication */}
-        <Text style={{ marginBottom: 20 }}>
-          Trouble Communication:{" "}
-          <Text style={{ fontWeight: "bold" }}>
-            {values.has_communication_problems ? "Yes" : "No"}
-          </Text>
-        </Text>
-        {/* meal issues */}
-        <Text style={{ marginBottom: 20 }}>
-          Meal Issues:{" "}
-          <Text style={{ fontWeight: "bold" }}>
-            {values.has_meal_problems ? "Yes" : "No"}
-          </Text>
-        </Text>
-        {/* sleep issues */}
-        <Text style={{ marginBottom: 20 }}>
-          Sleep Issues:{" "}
-          <Text style={{ fontWeight: "bold" }}>
-            {values.has_difficulty_with_sleep ? "Yes" : "No"}
-          </Text>
-        </Text>
-        {/* did we miss anything */}
-        <Text style={{ marginBottom: 20 }}>
-          Extra:{" "}
-          <Text style={{ fontWeight: "bold" }}>
-            {values.did_we_miss_anything}
-          </Text>
-        </Text>
+        {reviewFields.map((field) =>
+          renderField(field.label, field.value, field.key)
+        )}
       </ScrollView>
-      <TouchableOpacity style={styles.backBtn} onPress={() => setStep(13)}>
+
+      <TouchableOpacity style={styles.backBtn} onPress={() => setStep(14)}>
         <Text style={styles.stepNavActive}>Back</Text>
       </TouchableOpacity>
     </Card>

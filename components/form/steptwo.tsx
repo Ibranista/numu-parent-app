@@ -24,7 +24,7 @@ export default function StepTwo({
         />
       )}
     >
-      <ProgressBar step={3} totalSteps={6} />
+      <ProgressBar step={3} totalSteps={16} />
       {children}
       <View className="flex-row items-center">
         <Image source={require("@/assets/images/MagicStarIcon.png")} />

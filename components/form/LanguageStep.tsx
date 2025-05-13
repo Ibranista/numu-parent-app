@@ -2,11 +2,23 @@ import { IStepFormProps } from "@/Interface/childFormInterface";
 import { styles } from "@/styles/childFormStyle";
 import { Checkbox } from "expo-checkbox";
 import { LinearGradient } from "expo-linear-gradient";
-import React from "react";
+import React, { useCallback, useMemo } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Card from "../Card";
 import StepBtnBox from "../StepBtnBox";
 import ProgressBar from "./progressBar";
+
+const LANGUAGE_OPTIONS = [
+  { id: "arabic", title: "Arabic" },
+  { id: "english", title: "English" },
+  { id: "french", title: "French" },
+  { id: "spanish", title: "Spanish" },
+  { id: "hindi", title: "Hindi" },
+  { id: "bengali", title: "Bengali" },
+  { id: "tagalog", title: "Tagalog" },
+  { id: "urdu", title: "Urdu" },
+  { id: "farsi", title: "Farsi" },
+];
 
 export default function LanguageStep({
   setStep,
@@ -17,30 +29,24 @@ export default function LanguageStep({
 }: IStepFormProps & {
   setFieldValue: (field: string, value: any) => void;
 }) {
-  // Note: replace with backend enum field if you have tme.
-  const languages = [
-    { id: "arabic", title: "Arabic" },
-    { id: "english", title: "English" },
-    { id: "french", title: "French" },
-    { id: "spanish", title: "Spanish" },
-    { id: "hindi", title: "Hindi" },
-    { id: "bengali", title: "Bengali" },
-    { id: "tagalog", title: "Tagalog" },
-    { id: "urdu", title: "Urdu" },
-    { id: "farsi", title: "Farsi" },
-  ];
+  const selectedLanguages = useMemo(
+    () => values.languages || [],
+    [values.languages]
+  );
 
-  const toggleLanguage = (id: string) => {
-    const currentIds = values.languages || [];
-    if (currentIds.includes(id)) {
-      setFieldValue(
-        "languages",
-        currentIds.filter((itemId: string) => itemId !== id)
-      );
-    } else {
-      setFieldValue("languages", [...currentIds, id]);
-    }
-  };
+  const toggleLanguage = useCallback(
+    (id: string) => {
+      const updatedLanguages = selectedLanguages.includes(id)
+        ? selectedLanguages.filter((langId: string) => langId !== id)
+        : [...selectedLanguages, id];
+
+      setFieldValue("languages", updatedLanguages);
+    },
+    [selectedLanguages, setFieldValue]
+  );
+
+  const hasError = touched?.languages && !!errors?.languages;
+  const disableNext = selectedLanguages.length === 0 || hasError;
 
   return (
     <Card
@@ -54,13 +60,15 @@ export default function LanguageStep({
         />
       )}
     >
-      <ProgressBar step={5} totalSteps={6} />
+      <ProgressBar step={5} totalSteps={16} />
+
       <View style={localStyles.gridContainer}>
-        {languages.map((lang) => {
-          const isSelected = values.languages?.includes(lang.id);
+        {LANGUAGE_OPTIONS.map(({ id, title }) => {
+          const isSelected = selectedLanguages.includes(id);
+
           return (
             <LinearGradient
-              key={lang.id}
+              key={id}
               colors={["#d1b3e0", "#8e44ad"]}
               start={{ x: 0.5, y: 0 }}
               end={{ x: 0.5, y: 1 }}
@@ -70,8 +78,7 @@ export default function LanguageStep({
               ]}
             >
               <TouchableOpacity
-                key={lang.id}
-                onPress={() => toggleLanguage(lang.id)}
+                onPress={() => toggleLanguage(id)}
                 activeOpacity={0.8}
                 style={[
                   localStyles.concernCard,
@@ -79,11 +86,11 @@ export default function LanguageStep({
                 ]}
               >
                 <View style={localStyles.textContainer}>
-                  <Text style={localStyles.title}>{lang.title}</Text>
+                  <Text style={localStyles.title}>{title}</Text>
                 </View>
                 <Checkbox
                   value={isSelected}
-                  onValueChange={() => toggleLanguage(lang.id)}
+                  onValueChange={() => toggleLanguage(id)}
                   color={isSelected ? "#8e44ad" : undefined}
                   style={localStyles.checkbox}
                 />
@@ -93,41 +100,35 @@ export default function LanguageStep({
         })}
       </View>
 
-      {touched?.languages && errors?.languages && (
+      {hasError && (
         <Text style={{ color: "red", fontSize: 12, marginTop: 5 }}>
           {errors?.languages as string}
         </Text>
       )}
+
       <View style={{ height: 10 }} />
+
       <StepBtnBox>
         <TouchableOpacity
-          style={[
-            styles.backBtn,
-            { paddingVertical: 6, paddingHorizontal: 12, flex: 1 },
-          ]}
+          style={[styles.backBtn, localStyles.button]}
           onPress={() => setStep(3)}
         >
           <Text style={styles.stepNavActive}>Prev</Text>
         </TouchableOpacity>
+
         <TouchableOpacity
           style={[
             styles.backBtn,
-            { paddingVertical: 6, paddingHorizontal: 12, flex: 1 },
-            (values.languages.length === 0 || errors?.languages) && {
-              backgroundColor: "#8d44ada6",
-            },
+            localStyles.button,
+            disableNext && { backgroundColor: "#8d44ada6" },
           ]}
-          onPress={() =>
-            values.languages.length > 0 && !errors?.languages && setStep(5)
-          }
-          disabled={values.languages.length === 0 || !!errors?.languages}
+          onPress={() => !disableNext && setStep(5)}
+          disabled={disableNext}
         >
           <Text
             style={[
               styles.stepNavActive,
-              (values.languages.length === 0 || errors?.languages) && {
-                backgroundColor: "transparent",
-              },
+              disableNext && { backgroundColor: "transparent" },
             ]}
           >
             Next
@@ -191,5 +192,10 @@ const localStyles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "700",
     color: "#1a1a1a",
+  },
+  button: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    flex: 1,
   },
 });

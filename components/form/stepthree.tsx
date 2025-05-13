@@ -42,7 +42,7 @@ export default function StepThree({
         />
       )}
     >
-      <ProgressBar step={4} totalSteps={6} />
+      <ProgressBar step={4} totalSteps={16} />
       <View style={localStyles.gridContainer}>
         {concernList &&
           concernList.map((concern: any) => {
@@ -138,6 +138,7 @@ const localStyles = StyleSheet.create({
     flexWrap: "wrap",
     justifyContent: "space-between",
     paddingBottom: 8,
+    marginTop: 10,
   },
   gradientBorder: {
     width: "48%",
@@ -155,7 +156,7 @@ const localStyles = StyleSheet.create({
   },
   concernCard: {
     flexDirection: "row",
-    alignItems: "flex-start",
+    alignItems: "center",
     backgroundColor: "#fff",
     borderRadius: 14,
     padding: 10,

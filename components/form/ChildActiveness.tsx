@@ -1,6 +1,7 @@
+import { options } from "@/constants/stepForm";
 import { IStepFormProps } from "@/Interface/childFormInterface";
 import { styles } from "@/styles/childFormStyle";
-import React from "react";
+import React, { useCallback } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Card from "../Card";
 import StepBtnBox from "../StepBtnBox";
@@ -15,6 +16,15 @@ export default function ChildActiveness({
 }: IStepFormProps & {
   setFieldValue: (field: string, value: any) => void;
 }) {
+  const selectedValue = values.child_activeness;
+
+  const handleSelect = useCallback(
+    (value: boolean) => {
+      setFieldValue("child_activeness", value);
+    },
+    [setFieldValue]
+  );
+
   return (
     <Card
       title="My Child"
@@ -28,17 +38,14 @@ export default function ChildActiveness({
       )}
     >
       {/* You may want to update step/totalSteps props as needed */}
-      <ProgressBar step={8} totalSteps={10} />
+      <ProgressBar step={9} totalSteps={16} />
       <View style={stylesToggle.toggleContainer}>
-        {[
-          { label: "Yes", value: true },
-          { label: "No", value: false },
-        ].map((option) => {
-          const isSelected = values.child_activeness === option.value;
+        {options.map((option) => {
+          const isSelected = selectedValue === option.value;
           return (
             <TouchableOpacity
               key={option.label}
-              onPress={() => setFieldValue("child_activeness", option.value)}
+              onPress={() => handleSelect(option.value)}
               style={[
                 stylesToggle.toggleButton,
                 isSelected && stylesToggle.toggleButtonSelected,
@@ -46,9 +53,7 @@ export default function ChildActiveness({
               activeOpacity={0.8}
             >
               <View style={stylesToggle.iconCircle}>
-                <Text style={{ color: "#fff", fontSize: 12 }}>
-                  {option.value ? "✔" : "✖"}
-                </Text>
+                <Image source={option.icon} style={{ width: 20, height: 20 }} />
               </View>
               <Text
                 style={[
@@ -82,19 +87,26 @@ export default function ChildActiveness({
           style={[
             styles.backBtn,
             { paddingVertical: 6, paddingHorizontal: 12, flex: 1 },
-            (typeof values.child_activeness !== "boolean" || errors?.child_activeness) && {
+            (typeof values.child_activeness !== "boolean" ||
+              errors?.child_activeness) && {
               backgroundColor: "#8d44ada6",
             },
           ]}
           onPress={() =>
-            typeof values.child_activeness === "boolean" && !errors?.child_activeness && setStep(9)
+            typeof values.child_activeness === "boolean" &&
+            !errors?.child_activeness &&
+            setStep(9)
           }
-          disabled={typeof values.child_activeness !== "boolean" || !!errors?.child_activeness}
+          disabled={
+            typeof values.child_activeness !== "boolean" ||
+            !!errors?.child_activeness
+          }
         >
           <Text
             style={[
               styles.stepNavActive,
-              (typeof values.child_activeness !== "boolean" || errors?.child_activeness) && {
+              (typeof values.child_activeness !== "boolean" ||
+                errors?.child_activeness) && {
                 backgroundColor: "transparent",
               },
             ]}
@@ -127,7 +139,8 @@ const stylesToggle = StyleSheet.create({
     backgroundColor: "#fff",
   },
   toggleButtonSelected: {
-    borderColor: "#8e44ad",
+    borderColor: "#f0e7ff",
+    backgroundColor: "#8e44ad",
   },
   iconCircle: {
     width: 24,
@@ -144,5 +157,6 @@ const stylesToggle = StyleSheet.create({
   },
   toggleTextSelected: {
     fontWeight: "600",
+    color: "#fff",
   },
 });

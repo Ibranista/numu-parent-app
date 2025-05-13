@@ -13,3 +13,11 @@ export interface IStepFormProps {
     handleSubmit?: () => void;
     isSubmitting?: boolean;
 }
+
+export interface IGenderOptionProps {
+    gender: string;
+    selectedGender: string | undefined;
+    onPress: () => void;
+    icon: any;
+    label: string;
+};

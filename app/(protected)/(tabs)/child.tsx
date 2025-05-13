@@ -12,7 +12,7 @@ import MealBehavior from "@/components/form/MealBehavior";
 import MyChildBehavior from "@/components/form/MyChildBehavior";
 import SleepDifficulties from "@/components/form/SleepDifficulties";
 import StepThree from "@/components/form/stepthree";
-import StepThreeFormik from "@/components/form/stepThreeFormik";
+import StepTwoFormik from "@/components/form/stepThreeFormik";
 import StepTwo from "@/components/form/steptwo";
 import StruggleWithSocialSituation from "@/components/form/StruggleWithSocialSituation";
 import { createChild } from "@/features/child/thunkApi";
@@ -380,7 +380,7 @@ export default function App() {
             case 2:
               return (
                 <StepTwo setStep={setStep} values={values} errors={errors}>
-                  <StepThreeFormik
+                  <StepTwoFormik
                     value={values.birthDate}
                     error={touched.birthDate && errors.birthDate}
                     onChange={(date: string) =>

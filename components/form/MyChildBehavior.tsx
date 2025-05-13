@@ -27,7 +27,7 @@ export default function ChildBehavior({
         />
       )}
     >
-      <ProgressBar step={6} totalSteps={7} />
+      <ProgressBar step={6} totalSteps={16} />
       <View style={stylesToggle.toggleContainer}>
         {[
           { label: "Yes", value: true },
@@ -48,9 +48,17 @@ export default function ChildBehavior({
               activeOpacity={0.8}
             >
               <View style={stylesToggle.iconCircle}>
-                <Text style={{ color: "#fff", fontSize: 12 }}>
-                  {option.value ? "✔" : "✖"}
-                </Text>
+                {option?.value ? (
+                  <Image
+                    source={require("@/assets/images/right_icon.png")}
+                    style={{ width: 20, height: 20 }}
+                  />
+                ) : (
+                  <Image
+                    source={require("@/assets/images/x_icon.png")}
+                    style={{ width: 20, height: 20 }}
+                  />
+                )}
               </View>
               <Text
                 style={[
@@ -137,7 +145,8 @@ const stylesToggle = StyleSheet.create({
     backgroundColor: "#fff",
   },
   toggleButtonSelected: {
-    borderColor: "#8e44ad",
+    borderColor: "#f0e7ff",
+    backgroundColor: "#8e44ad",
   },
   iconCircle: {
     width: 24,
@@ -154,5 +163,6 @@ const stylesToggle = StyleSheet.create({
   },
   toggleTextSelected: {
     fontWeight: "600",
+    color: "#fff",
   },
 });

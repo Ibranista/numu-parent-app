@@ -53,7 +53,6 @@ export const styles = StyleSheet.create({
   },
   stepNavActive: {
     color: "#fff",
-    backgroundColor: "#8e44ad",
     borderColor: "#8e44ad",
   },
 });
