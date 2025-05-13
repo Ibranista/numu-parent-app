@@ -3,7 +3,7 @@ import { styles } from "@/styles/childFormStyle";
 import { Checkbox } from "expo-checkbox";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Card from "../Card";
 import StepBtnBox from "../StepBtnBox";
 import ProgressBar from "./progressBar";
@@ -32,9 +32,15 @@ export default function StepThree({
 
   return (
     <Card
-      title="What are your concerns?"
-      subTitle="Select all that apply"
+      title="Select all that apply"
+      subTitle="What concerns do you have?"
       handleSubmit={undefined}
+      StepIcon={() => (
+        <Image
+          source={require("@/assets/images/questionIcon.png")}
+          style={{ width: 40, height: 40, margin: "auto", marginBottom: 10 }}
+        />
+      )}
     >
       <ProgressBar step={4} totalSteps={5} />
       <View style={localStyles.gridContainer}>
@@ -138,8 +144,7 @@ const localStyles = StyleSheet.create({
     borderRadius: 16,
     marginBottom: 12,
     padding: 2,
-    // Add this to enforce uniform height
-    minHeight: 100, // Or any height that works for your layout
+    minHeight: 100,
   },
   gradientSelected: {
     shadowColor: "#8e44ad",

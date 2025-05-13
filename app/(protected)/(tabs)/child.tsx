@@ -18,7 +18,7 @@ import Toast from "react-native-toast-message";
 export default function App() {
   const dispatch = useAppDispatch();
   const concernData = useAppSelector(selectConcerns);
-  const totalSteps = 5;
+  const totalSteps = 6;
   const [step, setStep] = useState(-1);
 
   useEffect(() => {
@@ -136,6 +136,8 @@ export default function App() {
                   setFieldValue={setFieldValue}
                 />
               );
+            case 5:
+              return <Text>Hello</Text>;
             case 4:
               return (
                 <FinalStep
