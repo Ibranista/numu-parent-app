@@ -3,6 +3,7 @@ import { styles } from "@/styles/childFormStyle";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import Card from "../Card";
+import StepBtnBox from "../StepBtnBox";
 import ProgressBar from "./progressBar";
 
 export default function StepTwo({
@@ -20,30 +21,39 @@ export default function StepTwo({
       <ProgressBar step={3} totalSteps={5} />
       {children}
       <View style={{ height: 10 }} />
-      <TouchableOpacity style={styles.backBtn} onPress={() => setStep(1)}>
-        <Text style={styles.stepNavActive}>Prev</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[
-          styles.backBtn,
-          (!values.birthDate || errors?.birthDate) && {
-            backgroundColor: "#8d44ada6",
-          },
-        ]}
-        onPress={() => values.birthDate && !errors?.birthDate && setStep(3)}
-        disabled={!values.birthDate || !!errors?.birthDate}
-      >
-        <Text
+      <StepBtnBox>
+        <TouchableOpacity
           style={[
-            styles.stepNavActive,
+            styles.backBtn,
+            { paddingVertical: 6, paddingHorizontal: 12, flex: 1 },
+          ]}
+          onPress={() => setStep(1)}
+        >
+          <Text style={styles.stepNavActive}>Prev</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.backBtn,
+            { paddingVertical: 6, paddingHorizontal: 12, flex: 1 },
             (!values.birthDate || errors?.birthDate) && {
-              backgroundColor: "transparent",
+              backgroundColor: "#8d44ada6",
             },
           ]}
+          onPress={() => values.birthDate && !errors?.birthDate && setStep(3)}
+          disabled={!values.birthDate || !!errors?.birthDate}
         >
-          Next
-        </Text>
-      </TouchableOpacity>
+          <Text
+            style={[
+              styles.stepNavActive,
+              (!values.birthDate || errors?.birthDate) && {
+                backgroundColor: "transparent",
+              },
+            ]}
+          >
+            Next
+          </Text>
+        </TouchableOpacity>
+      </StepBtnBox>
     </Card>
   );
 }

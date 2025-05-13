@@ -4,6 +4,7 @@ import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import MultiSelect from "react-native-multiple-select";
 import Card from "../Card";
+import StepBtnBox from "../StepBtnBox";
 import ProgressBar from "./progressBar";
 
 export default function StepThree({
@@ -43,6 +44,7 @@ export default function StepThree({
             color: "#8e44ad",
             fontSize: 16,
           }}
+          submitButtonColor="#8e44ad"
           styleTextDropdown={{ color: "#8e44ad", fontSize: 16 }}
           styleListContainer={{ backgroundColor: "#fff" }}
           styleRowList={{ backgroundColor: "#fff", borderRadius: 8 }}
@@ -56,32 +58,41 @@ export default function StepThree({
         </Text>
       )}
       <View style={{ height: 10 }} />
-      <TouchableOpacity style={styles.backBtn} onPress={() => setStep(2)}>
-        <Text style={styles.stepNavActive}>Prev</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[
-          styles.backBtn,
-          (values.concern_ids.length === 0 || errors?.concern_ids) && {
-            backgroundColor: "#8d44ada6",
-          },
-        ]}
-        onPress={() =>
-          values.concern_ids.length > 0 && !errors?.concern_ids && setStep(4)
-        }
-        disabled={values.concern_ids.length === 0 || !!errors?.concern_ids}
-      >
-        <Text
+      <StepBtnBox>
+        <TouchableOpacity
           style={[
-            styles.stepNavActive,
+            styles.backBtn,
+            { paddingVertical: 6, paddingHorizontal: 12, flex: 1 },
+          ]}
+          onPress={() => setStep(2)}
+        >
+          <Text style={styles.stepNavActive}>Prev</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.backBtn,
+            { paddingVertical: 6, paddingHorizontal: 12, flex: 1 },
             (values.concern_ids.length === 0 || errors?.concern_ids) && {
-              backgroundColor: "transparent",
+              backgroundColor: "#8d44ada6",
             },
           ]}
+          onPress={() =>
+            values.concern_ids.length > 0 && !errors?.concern_ids && setStep(4)
+          }
+          disabled={values.concern_ids.length === 0 || !!errors?.concern_ids}
         >
-          Next
-        </Text>
-      </TouchableOpacity>
+          <Text
+            style={[
+              styles.stepNavActive,
+              (values.concern_ids.length === 0 || errors?.concern_ids) && {
+                backgroundColor: "transparent",
+              },
+            ]}
+          >
+            Next
+          </Text>
+        </TouchableOpacity>
+      </StepBtnBox>
     </Card>
   );
 }

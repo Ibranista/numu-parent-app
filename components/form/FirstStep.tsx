@@ -1,9 +1,9 @@
 import { IStepFormProps } from "@/Interface/childFormInterface";
 import { styles } from "@/styles/childFormStyle";
 import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import Card from "../Card";
+import StepBtnBox from "../StepBtnBox";
 import ProgressBar from "./progressBar";
 
 export default function StepOne({
@@ -43,19 +43,11 @@ export default function StepOne({
           }}
           onPress={() => setFieldValue("gender", "male")}
         >
-          <Text
-            style={{
-              fontSize: 24,
-              color: values.gender === "male" ? "#8e44ad" : "#999",
-            }}
-          >
-            <Icon
-              name="male"
-              size={24}
-              color={values.gender === "male" ? "#8e44ad" : "#999"}
-            />
-          </Text>
-          <Text style={{ marginTop: 5, fontWeight: "500" }}>Male</Text>
+          <Image
+            source={require("@/assets/images/Boy.png")}
+            style={{ width: 24, height: 24 }}
+          />
+          <Text style={{ marginTop: 5, fontWeight: "500" }}>Boy</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={{
@@ -70,19 +62,11 @@ export default function StepOne({
           }}
           onPress={() => setFieldValue("gender", "female")}
         >
-          <Text
-            style={{
-              fontSize: 24,
-              color: values.gender === "female" ? "#8e44ad" : "#999",
-            }}
-          >
-            <Icon
-              name="female"
-              size={24}
-              color={values.gender === "female" ? "#8e44ad" : "#999"}
-            />
-          </Text>
-          <Text style={{ marginTop: 5, fontWeight: "500" }}>Female</Text>
+          <Image
+            source={require("@/assets/images/Girl.png")}
+            style={{ width: 24, height: 24 }}
+          />
+          <Text style={{ marginTop: 5, fontWeight: "500" }}>Girl</Text>
         </TouchableOpacity>
       </View>
       {touched?.gender && errors?.gender && (
@@ -91,30 +75,40 @@ export default function StepOne({
         </Text>
       )}
       <View style={{ height: 10 }} />
-      <TouchableOpacity style={styles.backBtn} onPress={() => setStep(0)}>
-        <Text style={styles.stepNavActive}>Prev</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[
-          styles.backBtn,
-          (!values.gender || errors?.gender) && {
-            backgroundColor: "#8d44ada6",
-          },
-        ]}
-        onPress={() => values.gender && !errors?.gender && setStep(2)}
-        disabled={!values.gender || !!errors?.gender}
-      >
-        <Text
+      <StepBtnBox>
+        <TouchableOpacity
           style={[
-            styles.stepNavActive,
+            styles.backBtn,
+            { paddingVertical: 6, paddingHorizontal: 12, flex: 1 },
+          ]}
+          onPress={() => setStep(0)}
+        >
+          <Text style={styles.stepNavActive}>Prev</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[
+            styles.backBtn,
+            { paddingVertical: 6, paddingHorizontal: 12, flex: 1 },
             (!values.gender || errors?.gender) && {
-              backgroundColor: "transparent",
+              backgroundColor: "#8d44ada6",
             },
           ]}
+          onPress={() => values.gender && !errors?.gender && setStep(2)}
+          disabled={!values.gender || !!errors?.gender}
         >
-          Next
-        </Text>
-      </TouchableOpacity>
+          <Text
+            style={[
+              styles.stepNavActive,
+              (!values.gender || errors?.gender) && {
+                backgroundColor: "transparent",
+              },
+            ]}
+          >
+            Next
+          </Text>
+        </TouchableOpacity>
+      </StepBtnBox>
     </Card>
   );
 }
