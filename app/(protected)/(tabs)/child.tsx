@@ -3,6 +3,7 @@ import ChildActiveness from "@/components/form/ChildActiveness";
 import DifficultyMovement from "@/components/form/DifficultyMovement";
 import FinalStep from "@/components/form/finalStep";
 import StepOne from "@/components/form/FirstStep";
+import HasTroubleLearning from "@/components/form/HasTroubleLearning";
 import InitialStep from "@/components/form/initialStep";
 import LanguageStep from "@/components/form/LanguageStep";
 import MyChildBehavior from "@/components/form/MyChildBehavior";
@@ -24,7 +25,7 @@ import Toast from "react-native-toast-message";
 export default function App() {
   const dispatch = useAppDispatch();
   const concernData = useAppSelector(selectConcerns);
-  const totalSteps = 11;
+  const totalSteps = 12;
   const [step, setStep] = useState(-1);
 
   useEffect(() => {
@@ -44,6 +45,7 @@ export default function App() {
         struggle_with_social: undefined,
         child_activeness: undefined,
         has_difficulty_movement: undefined,
+        has_learning_problems: undefined,
       }}
       validationSchema={childSchema}
       onSubmit={async (values, { setSubmitting, resetForm }) => {
@@ -59,6 +61,7 @@ export default function App() {
             struggle_with_social: values.struggle_with_social,
             child_activeness: values.child_activeness,
             has_difficulty_movement: values.has_difficulty_movement,
+            has_learning_problems: values.has_learning_problems,
           })
         );
         setSubmitting(false);
@@ -201,6 +204,29 @@ export default function App() {
               !errors.child_activeness &&
               !errors.has_difficulty_movement
             );
+          if (idx === 11)
+            return (
+              values.name &&
+              values.gender &&
+              values.birthDate &&
+              values.concern_ids.length > 0 &&
+              values.languages &&
+              values.languages.length > 0 &&
+              typeof values.has_emotional_distress_signs === "boolean" &&
+              typeof values.is_behavior_challenging === "boolean" &&
+              typeof values.struggle_with_social === "boolean" &&
+              typeof values.child_activeness === "boolean" &&
+              typeof values.has_difficulty_movement === "boolean" &&
+              typeof values.has_learning_problems === "boolean" &&
+              !errors.concern_ids &&
+              !errors.languages &&
+              !errors.has_emotional_distress_signs &&
+              !errors.is_behavior_challenging &&
+              !errors.struggle_with_social &&
+              !errors.child_activeness &&
+              !errors.has_difficulty_movement &&
+              !errors.has_learning_problems
+            );
           return false;
         };
         // Render steps
@@ -311,6 +337,16 @@ export default function App() {
                 />
               );
             case 10:
+              return (
+                <HasTroubleLearning
+                  setStep={setStep}
+                  values={values}
+                  errors={errors}
+                  touched={touched}
+                  setFieldValue={setFieldValue}
+                />
+              );
+            case 11:
               return (
                 <FinalStep
                   setStep={setStep}
