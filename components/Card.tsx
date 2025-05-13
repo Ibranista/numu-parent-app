@@ -7,21 +7,27 @@ export default function Card({
   subTitle,
   submitText,
   handleSubmit,
+  StepIcon,
 }: {
   children: React.ReactNode;
   title: string;
   subTitle: string;
   submitText?: string;
   handleSubmit?: () => void;
+  StepIcon?: React.FC;
 }) {
   return (
     <View style={styles.card}>
-      <Icon
-        name="user-circle"
-        size={40}
-        color="#8e44ad"
-        style={styles.userIcon}
-      />
+      {StepIcon ? (
+        <StepIcon />
+      ) : (
+        <Icon
+          name="user-circle"
+          size={40}
+          color="#8e44ad"
+          style={styles.userIcon}
+        />
+      )}
       <Text style={styles.subHeader}>{title}</Text>
       <Text style={styles.header}>{subTitle}</Text>
       {children}

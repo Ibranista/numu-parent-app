@@ -1,7 +1,7 @@
 import { IStepFormProps } from "@/Interface/childFormInterface";
 import { styles } from "@/styles/childFormStyle";
 import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import Card from "../Card";
 import StepBtnBox from "../StepBtnBox";
 import ProgressBar from "./progressBar";
@@ -14,9 +14,15 @@ export default function StepTwo({
 }: IStepFormProps) {
   return (
     <Card
-      title="When was your child born?"
-      subTitle="Birth Date"
+      title="Different age groups require different approaches"
+      subTitle="When was your child's Birthday?"
       handleSubmit={undefined}
+      StepIcon={() => (
+        <Image
+          source={require("@/assets/images/cake.png")}
+          style={{ width: 40, height: 40, margin: "auto", marginBottom: 10 }}
+        />
+      )}
     >
       <ProgressBar step={3} totalSteps={5} />
       {children}
