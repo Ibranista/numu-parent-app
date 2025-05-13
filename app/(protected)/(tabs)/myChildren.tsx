@@ -32,7 +32,9 @@ export default function MyChildren() {
   const { child, loading } = childrenData ?? {};
   const [loadingTherapistIds, setLoadingTherapistIds] = useState<string[]>([]);
   const [declineSubmitting, setDeclineSubmitting] = useState(false);
-
+  const { total } = child || {};
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(5);
   // LISTEN TO NEW MATCHES: Self Note: always start ur server at 0.0.0
   useEffect(() => {
     const ws = new WebSocket("ws://10.0.2.2:8000/ws/therapistmatch/");
@@ -55,8 +57,8 @@ export default function MyChildren() {
   }, [dispatch]);
 
   useEffect(() => {
-    dispatch(getChildren({ page: 1, limit: 5 }));
-  }, [dispatch]);
+    dispatch(getChildren({ page, limit }));
+  }, [dispatch, page, limit]);
 
   const [expanded, setExpanded] = useState<string | null>(null);
   const [expertiseModal, setExpertiseModal] = useState<{
@@ -138,170 +140,229 @@ export default function MyChildren() {
       {loading ? (
         <Loader />
       ) : (
-        <FlatList
-          data={child?.results || []}
-          keyExtractor={(item: any) => item.id.toString()}
-          showsVerticalScrollIndicator={false}
-          className="pb-4"
-          renderItem={({ item: myChild }: { item: any }) => (
-            <View
-              key={myChild.id}
-              className="bg-[#f3e8ff] dark:bg-[#2d223a] rounded-xl p-4 mb-4 shadow-sm border border-[#8450A0]/20"
-            >
-              <Pressable
-                className="flex-row justify-between items-start"
-                onPress={() =>
-                  setExpanded(expanded === myChild.id ? null : myChild.id)
-                }
+        <>
+          <FlatList
+            data={child?.results || []}
+            keyExtractor={(item: any) => item.id.toString()}
+            showsVerticalScrollIndicator={false}
+            className="pb-4"
+            renderItem={({ item: myChild }: { item: any }) => (
+              <View
+                key={myChild.id}
+                className="bg-[#f3e8ff] dark:bg-[#2d223a] rounded-xl p-4 mb-4 shadow-sm border border-[#8450A0]/20"
               >
-                <View>
-                  <ThemedText
-                    type="subtitle"
-                    className="text-lg text-[#8450A0] dark:text-[#fff] mb-1"
-                  >
-                    {myChild.name}
-                  </ThemedText>
-                  <ThemedText className="text-base text-gray-700 dark:text-gray-200 mb-1">
-                    Gender:{" "}
-                    <ThemedText className="font-semibold">
-                      {myChild.gender.charAt(0).toUpperCase() +
-                        myChild.gender.slice(1)}
+                <Pressable
+                  className="flex-row justify-between items-start"
+                  onPress={() =>
+                    setExpanded(expanded === myChild.id ? null : myChild.id)
+                  }
+                >
+                  <View>
+                    <ThemedText
+                      type="subtitle"
+                      className="text-lg text-[#8450A0] dark:text-[#fff] mb-1"
+                    >
+                      {myChild.name}
                     </ThemedText>
-                  </ThemedText>
-                  <ThemedText className="text-base text-gray-700 dark:text-gray-200">
-                    Birth Date:{" "}
-                    <ThemedText className="font-semibold">
-                      {myChild.birthDate}
+                    <ThemedText className="text-base text-gray-700 dark:text-gray-200 mb-1">
+                      Gender:{" "}
+                      <ThemedText className="font-semibold">
+                        {myChild.gender.charAt(0).toUpperCase() +
+                          myChild.gender.slice(1)}
+                      </ThemedText>
                     </ThemedText>
-                  </ThemedText>
-                </View>
-                <Ionicons
-                  name={expanded === myChild.id ? "chevron-up" : "chevron-down"}
-                  size={24}
-                  color="#8450A0"
-                  style={{ marginLeft: 8 }}
-                />
-              </Pressable>
-              {expanded === myChild.id && (
-                <View className="mt-4">
-                  <ThemedText className="text-base text-[#8450A0] dark:text-white font-semibold mb-3">
-                    Therapists:
-                  </ThemedText>
-                  <FlatList
-                    data={
-                      myChild?.therapist_matches?.filter(
-                        (item: any) =>
-                          item.status !== "accepted" &&
-                          item.status !== "declined"
-                      ) || []
+                    <ThemedText className="text-base text-gray-700 dark:text-gray-200">
+                      Birth Date:{" "}
+                      <ThemedText className="font-semibold">
+                        {myChild.birthDate}
+                      </ThemedText>
+                    </ThemedText>
+                  </View>
+                  <Ionicons
+                    name={
+                      expanded === myChild.id ? "chevron-up" : "chevron-down"
                     }
-                    keyExtractor={(item: any) => item.therapist.id.toString()}
-                    renderItem={({ item }: { item: any }) => (
-                      <View
-                        key={item.therapist.id}
-                        className="mb-4 bg-white dark:bg-[#1a1324] rounded-lg p-4 border border-[#8450A0]/10 shadow-sm"
-                      >
-                        <View className="flex-row items-start">
-                          <Image
-                            source={{ uri: item.therapist.image }}
-                            style={{
-                              width: 56,
-                              height: 56,
-                              borderRadius: 28,
-                              backgroundColor: "#eee",
-                            }}
-                            resizeMode="cover"
-                            className="mr-3"
-                          />
-                          <View className="flex-1">
-                            <View className="flex-row justify-between items-start">
-                              <View>
-                                <ThemedText className="text-lg font-bold text-[#8450A0] dark:text-white">
-                                  {item.therapist.name}
-                                </ThemedText>
-                                <ThemedText className="text-sm text-gray-500 dark:text-gray-300 mt-1">
-                                  {item.therapist.experience_years} years
-                                  experience
-                                </ThemedText>
-                              </View>
-                              <View className="flex-row space-x-2">
-                                <TouchableOpacity
-                                  className="bg-[#8450A0] px-3 py-1 rounded-full items-center justify-center"
-                                  onPress={() =>
-                                    handleTherapistStatusUpdate({
-                                      status: "accepted",
-                                      id: item.id,
-                                    })
-                                  }
-                                  disabled={loadingTherapistIds.includes(
-                                    item.id
-                                  )}
-                                  accessibilityLabel="Accept Therapist"
-                                >
-                                  <Text className="text-white font-semibold text-sm">
-                                    {loadingTherapistIds.includes(item.id)
-                                      ? "Accepting..."
-                                      : "Accept"}
-                                  </Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                  className="bg-[#ff4444] px-3 py-1 rounded-full items-center justify-center"
-                                  onPress={() => {
-                                    setSelectedTherapist(item.id);
-                                    setShowDeclineModal(true);
-                                  }}
-                                >
-                                  <Text className="text-white font-semibold text-sm">
-                                    Decline
-                                  </Text>
-                                </TouchableOpacity>
-                              </View>
-                            </View>
-                            <View className="flex-row flex-wrap items-center mt-2">
-                              {item.therapist.expertise
-                                .slice(0, 3)
-                                .map((e: any, idx: number) => (
-                                  <Pressable
-                                    key={e.id}
-                                    className="bg-[#8450A0]/10 px-2 py-1 rounded-full mr-2 mb-2"
+                    size={24}
+                    color="#8450A0"
+                    style={{ marginLeft: 8 }}
+                  />
+                </Pressable>
+                {expanded === myChild.id && (
+                  <View className="mt-4">
+                    <ThemedText className="text-base text-[#8450A0] dark:text-white font-semibold mb-3">
+                      Therapists:
+                    </ThemedText>
+                    <FlatList
+                      data={
+                        myChild?.therapist_matches?.filter(
+                          (item: any) =>
+                            item.status !== "accepted" &&
+                            item.status !== "declined"
+                        ) || []
+                      }
+                      keyExtractor={(item: any) => item.therapist.id.toString()}
+                      renderItem={({ item }: { item: any }) => (
+                        <View
+                          key={item.therapist.id}
+                          className="mb-4 bg-white dark:bg-[#1a1324] rounded-lg p-4 border border-[#8450A0]/10 shadow-sm"
+                        >
+                          <View className="flex-row items-start">
+                            <Image
+                              source={{ uri: item.therapist.image }}
+                              style={{
+                                width: 56,
+                                height: 56,
+                                borderRadius: 28,
+                                backgroundColor: "#eee",
+                              }}
+                              resizeMode="cover"
+                              className="mr-3"
+                            />
+                            <View className="flex-1">
+                              <View className="flex-row justify-between items-start">
+                                <View>
+                                  <ThemedText className="text-lg font-bold text-[#8450A0] dark:text-white">
+                                    {item.therapist.name}
+                                  </ThemedText>
+                                  <ThemedText className="text-sm text-gray-500 dark:text-gray-300 mt-1">
+                                    {item.therapist.experience_years} years
+                                    experience
+                                  </ThemedText>
+                                </View>
+                                <View className="flex-row space-x-2">
+                                  <TouchableOpacity
+                                    className="bg-[#8450A0] px-3 py-1 rounded-full items-center justify-center"
                                     onPress={() =>
-                                      setExpertiseModal({
-                                        open: true,
-                                        items: item.therapist.expertise.map(
-                                          (x: any) => x.expertise
-                                        ),
+                                      handleTherapistStatusUpdate({
+                                        status: "accepted",
+                                        id: item.id,
                                       })
                                     }
+                                    disabled={loadingTherapistIds.includes(
+                                      item.id
+                                    )}
+                                    accessibilityLabel="Accept Therapist"
                                   >
-                                    <ThemedText className="text-xs text-[#8450A0] dark:text-[#c7a8e0] font-semibold">
-                                      {e.expertise}
-                                      {idx === 2 &&
-                                      item.therapist.expertise.length > 3
-                                        ? ` +${
-                                            item.therapist.expertise.length - 3
-                                          }`
-                                        : ""}
-                                    </ThemedText>
-                                  </Pressable>
-                                ))}
+                                    <Text className="text-white font-semibold text-sm">
+                                      {loadingTherapistIds.includes(item.id)
+                                        ? "Accepting..."
+                                        : "Accept"}
+                                    </Text>
+                                  </TouchableOpacity>
+                                  <TouchableOpacity
+                                    className="bg-[#ff4444] px-3 py-1 rounded-full items-center justify-center"
+                                    onPress={() => {
+                                      setSelectedTherapist(item.id);
+                                      setShowDeclineModal(true);
+                                    }}
+                                  >
+                                    <Text className="text-white font-semibold text-sm">
+                                      Decline
+                                    </Text>
+                                  </TouchableOpacity>
+                                </View>
+                              </View>
+                              <View className="flex-row flex-wrap items-center mt-2">
+                                {item.therapist.expertise
+                                  .slice(0, 3)
+                                  .map((e: any, idx: number) => (
+                                    <Pressable
+                                      key={e.id}
+                                      className="bg-[#8450A0]/10 px-2 py-1 rounded-full mr-2 mb-2"
+                                      onPress={() =>
+                                        setExpertiseModal({
+                                          open: true,
+                                          items: item.therapist.expertise.map(
+                                            (x: any) => x.expertise
+                                          ),
+                                        })
+                                      }
+                                    >
+                                      <ThemedText className="text-xs text-[#8450A0] dark:text-[#c7a8e0] font-semibold">
+                                        {e.expertise}
+                                        {idx === 2 &&
+                                        item.therapist.expertise.length > 3
+                                          ? ` +${
+                                              item.therapist.expertise.length -
+                                              3
+                                            }`
+                                          : ""}
+                                      </ThemedText>
+                                    </Pressable>
+                                  ))}
+                              </View>
+                              {item.therapist.bio && (
+                                <ThemedText className="text-sm text-gray-700 dark:text-gray-300 mt-2">
+                                  {item.therapist.bio.length > 100
+                                    ? `${item.therapist.bio.substring(
+                                        0,
+                                        100
+                                      )}...`
+                                    : item.therapist.bio}
+                                </ThemedText>
+                              )}
                             </View>
-                            {item.therapist.bio && (
-                              <ThemedText className="text-sm text-gray-700 dark:text-gray-300 mt-2">
-                                {item.therapist.bio.length > 100
-                                  ? `${item.therapist.bio.substring(0, 100)}...`
-                                  : item.therapist.bio}
-                              </ThemedText>
-                            )}
                           </View>
                         </View>
-                      </View>
-                    )}
-                  />
-                </View>
+                      )}
+                    />
+                  </View>
+                )}
+              </View>
+            )}
+          />
+          {/* Pagination Controls */}
+          {total && total > limit && (
+            <View className="flex-row justify-between items-center mt-2 mb-4">
+              <TouchableOpacity
+                className={`px-4 py-2 rounded-full bg-[#8450A0] ${
+                  page === 1 ? "opacity-50" : ""
+                }`}
+                onPress={() => setPage((prev) => Math.max(1, prev - 1))}
+                disabled={page === 1}
+              >
+                <Text className="text-white font-semibold">Previous</Text>
+              </TouchableOpacity>
+              <View className="flex-row items-center">
+                <Text className="mr-2 text-[#8450A0] font-semibold">
+                  Limit:
+                </Text>
+                <TouchableOpacity
+                  className={`px-3 py-1 rounded-full bg-[#8450A0] mx-1 ${
+                    limit === 3 ? "opacity-70" : ""
+                  }`}
+                  onPress={() => setLimit(3)}
+                >
+                  <Text className="text-white">5</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  className={`px-3 py-1 rounded-full bg-[#8450A0] mx-1 ${
+                    limit === 5 ? "opacity-70" : ""
+                  }`}
+                  onPress={() => setLimit(5)}
+                >
+                  <Text className="text-white">10</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  className={`px-3 py-1 rounded-full bg-[#8450A0] mx-1 ${
+                    limit === 10 ? "opacity-70" : ""
+                  }`}
+                  onPress={() => setLimit(10)}
+                >
+                  <Text className="text-white">10</Text>
+                </TouchableOpacity>
+              </View>
+              {!!child && child.total > page * limit && (
+                <TouchableOpacity
+                  className="px-4 py-2 rounded-full bg-[#8450A0]"
+                  onPress={() => setPage((prev) => prev + 1)}
+                >
+                  <Text className="text-white font-semibold">Next</Text>
+                </TouchableOpacity>
               )}
             </View>
           )}
-        />
+        </>
       )}
 
       {/* decline modal */}
