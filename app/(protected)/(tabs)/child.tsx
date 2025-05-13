@@ -563,26 +563,18 @@ export default function App() {
             ) : (
               <>
                 {renderStep()}
-                <View style={styles.stepNavContainer}>
-                  {[...Array(totalSteps)].map((_, idx) => {
-                    const isDisabled = !canGoToStep(idx);
-                    return (
-                      <Text
-                        key={idx}
-                        style={[
-                          styles.stepNav,
-                          step === idx && styles.stepNavActive,
-                          isDisabled && { opacity: 0.4 },
-                        ]}
-                        onPress={() => {
-                          if (!isDisabled) setStep(idx);
-                        }}
-                      >
-                        {idx + 1}
-                      </Text>
-                    );
-                  })}
-                </View>
+                {step > -1 && step !== 15 && (
+                  <Text
+                    style={{
+                      textAlign: "right",
+                      fontSize: 16,
+                      marginBottom: 12,
+                      marginRight: 20,
+                    }}
+                  >
+                    Question {step + 1} of {totalSteps}
+                  </Text>
+                )}
               </>
             )}
           </View>
