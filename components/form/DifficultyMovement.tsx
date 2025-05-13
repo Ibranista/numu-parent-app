@@ -1,8 +1,8 @@
-import { options } from "@/constants/stepForm";
+import { options, stylesToggle } from "@/constants/stepForm";
 import { IStepFormProps } from "@/Interface/childFormInterface";
 import { styles } from "@/styles/childFormStyle";
 import React, { useCallback } from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import Card from "../Card";
 import StepBtnBox from "../StepBtnBox";
 import ProgressBar from "./progressBar";
@@ -118,45 +118,3 @@ export default function DifficultyMovement({
     </Card>
   );
 }
-
-const stylesToggle = StyleSheet.create({
-  toggleContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 10,
-    marginBottom: 16,
-  },
-  toggleButton: {
-    flexDirection: "column",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#e0e0e0",
-    borderRadius: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 18,
-    flex: 1,
-    marginHorizontal: 4,
-    backgroundColor: "#fff",
-  },
-  toggleButtonSelected: {
-    borderColor: "#f0e7ff",
-    backgroundColor: "#8e44ad",
-  },
-  iconCircle: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: "#4d4d4d",
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 4,
-  },
-  toggleText: {
-    fontSize: 14,
-    color: "#333",
-  },
-  toggleTextSelected: {
-    fontWeight: "600",
-    color: "#fff",
-  },
-});

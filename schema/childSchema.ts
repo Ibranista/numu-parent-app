@@ -2,12 +2,20 @@ import * as Yup from 'yup';
 
 export const childInitialState = {
     name: "",
-    gender: "" as "male" | "female" | "",
+    gender: "",
     birthDate: "",
-    concern_ids: [] as never[],
-    concerns: [],
-    therapist_matches: [],
-    acceptedTherapists: [],
+    concern_ids: [],
+    languages: [],
+    has_emotional_distress_signs: undefined,
+    is_behavior_challenging: undefined,
+    struggle_with_social: undefined,
+    child_activeness: undefined,
+    has_difficulty_movement: undefined,
+    has_learning_problems: undefined,
+    has_communication_problems: undefined,
+    has_meal_problems: undefined,
+    has_difficulty_with_sleep: undefined,
+    did_we_miss_anything: "",
 };
 
 export const childSchema = Yup.object().shape({

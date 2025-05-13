@@ -19,7 +19,7 @@ import { createChild } from "@/features/child/thunkApi";
 import { selectConcerns } from "@/features/concerns/selector";
 import { getConcerns } from "@/features/concerns/thunk.api";
 import { useAppDispatch, useAppSelector } from "@/hooks/stateHooks";
-import { childSchema } from "@/schema/childSchema";
+import { childInitialState, childSchema } from "@/schema/childSchema";
 import { styles } from "@/styles/childFormStyle";
 import { Formik } from "formik";
 import React, { useEffect, useState } from "react";
@@ -38,44 +38,28 @@ export default function App() {
 
   return (
     <Formik
-      initialValues={{
-        name: "",
-        gender: "",
-        birthDate: "",
-        concern_ids: [],
-        languages: [],
-        has_emotional_distress_signs: undefined,
-        is_behavior_challenging: undefined,
-        struggle_with_social: undefined,
-        child_activeness: undefined,
-        has_difficulty_movement: undefined,
-        has_learning_problems: undefined,
-        has_communication_problems: undefined,
-        has_meal_problems: undefined,
-        has_difficulty_with_sleep: undefined,
-        did_we_miss_anything: "",
-      }}
+      initialValues={childInitialState}
       validationSchema={childSchema}
       onSubmit={async (values, { setSubmitting, resetForm }) => {
-        const payload = {
-          gender: values.gender as "" | "male" | "female",
-          birthDate: values.birthDate as unknown as Date,
-          concern_ids: values.concern_ids,
-          name: values.name,
-          has_emotional_distress_signs: values.has_emotional_distress_signs,
-          is_behavior_challenging: values.is_behavior_challenging,
-          languages: values.languages,
-          struggle_with_social: values.struggle_with_social,
-          child_activeness: values.child_activeness,
-          has_difficulty_movement: values.has_difficulty_movement,
-          has_learning_problems: values.has_learning_problems,
-          has_communication_problems: values.has_communication_problems,
-          has_meal_problems: values.has_meal_problems,
-          has_difficulty_with_sleep: values.has_difficulty_with_sleep,
-          did_we_miss_anything: values.did_we_miss_anything,
-        };
-        console.log("payload", payload);
-        const result = await dispatch(createChild(payload));
+        // const payload = {
+        //   gender: values.gender as "" | "male" | "female",
+        //   birthDate: values.birthDate as unknown as Date,
+        //   concern_ids: values.concern_ids,
+        //   name: values.name,
+        //   has_emotional_distress_signs: values.has_emotional_distress_signs,
+        //   is_behavior_challenging: values.is_behavior_challenging,
+        //   languages: values.languages,
+        //   struggle_with_social: values.struggle_with_social,
+        //   child_activeness: values.child_activeness,
+        //   has_difficulty_movement: values.has_difficulty_movement,
+        //   has_learning_problems: values.has_learning_problems,
+        //   has_communication_problems: values.has_communication_problems,
+        //   has_meal_problems: values.has_meal_problems,
+        //   has_difficulty_with_sleep: values.has_difficulty_with_sleep,
+        //   did_we_miss_anything: values.did_we_miss_anything,
+        // };
+        // console.log("payload", payload);
+        const result = await dispatch(createChild(values));
         console.log("result", result);
         setSubmitting(false);
         if (createChild.fulfilled.match(result)) {
@@ -101,258 +85,6 @@ export default function App() {
         isSubmitting,
       }) => {
         const concernList = concernData?.concerns?.results || [];
-        // Step navigation validation
-        const canGoToStep = (idx: number) => {
-          if (idx === 0) return true;
-          if (idx === 1) return values.name && !errors.name;
-          if (idx === 2) return values.name && values.gender && !errors.gender;
-          if (idx === 3)
-            return (
-              values.name &&
-              values.gender &&
-              values.birthDate &&
-              !errors.birthDate
-            );
-          if (idx === 4)
-            return (
-              values.name &&
-              values.gender &&
-              values.birthDate &&
-              values.concern_ids.length > 0 &&
-              !errors.concern_ids
-            );
-          if (idx === 5)
-            return (
-              values.name &&
-              values.gender &&
-              values.birthDate &&
-              values.concern_ids.length > 0 &&
-              values.languages &&
-              values.languages.length > 0 &&
-              !errors.concern_ids &&
-              !errors.languages
-            );
-          if (idx === 6)
-            return (
-              values.name &&
-              values.gender &&
-              values.birthDate &&
-              values.concern_ids.length > 0 &&
-              values.languages &&
-              values.languages.length > 0 &&
-              typeof values.has_emotional_distress_signs === "boolean" &&
-              !errors.concern_ids &&
-              !errors.languages &&
-              !errors.has_emotional_distress_signs
-            );
-          if (idx === 7)
-            return (
-              values.name &&
-              values.gender &&
-              values.birthDate &&
-              values.concern_ids.length > 0 &&
-              values.languages &&
-              values.languages.length > 0 &&
-              typeof values.has_emotional_distress_signs === "boolean" &&
-              typeof values.is_behavior_challenging === "boolean" &&
-              !errors.concern_ids &&
-              !errors.languages &&
-              !errors.has_emotional_distress_signs &&
-              !errors.is_behavior_challenging
-            );
-          if (idx === 8)
-            return (
-              values.name &&
-              values.gender &&
-              values.birthDate &&
-              values.concern_ids.length > 0 &&
-              values.languages &&
-              values.languages.length > 0 &&
-              typeof values.has_emotional_distress_signs === "boolean" &&
-              typeof values.is_behavior_challenging === "boolean" &&
-              typeof values.struggle_with_social === "boolean" &&
-              !errors.concern_ids &&
-              !errors.languages &&
-              !errors.has_emotional_distress_signs &&
-              !errors.is_behavior_challenging &&
-              !errors.struggle_with_social
-            );
-          if (idx === 9)
-            return (
-              values.name &&
-              values.gender &&
-              values.birthDate &&
-              values.concern_ids.length > 0 &&
-              values.languages &&
-              values.languages.length > 0 &&
-              typeof values.has_emotional_distress_signs === "boolean" &&
-              typeof values.is_behavior_challenging === "boolean" &&
-              typeof values.struggle_with_social === "boolean" &&
-              typeof values.child_activeness === "boolean" &&
-              !errors.concern_ids &&
-              !errors.languages &&
-              !errors.has_emotional_distress_signs &&
-              !errors.is_behavior_challenging &&
-              !errors.struggle_with_social &&
-              !errors.child_activeness
-            );
-          if (idx === 10)
-            return (
-              values.name &&
-              values.gender &&
-              values.birthDate &&
-              values.concern_ids.length > 0 &&
-              values.languages &&
-              values.languages.length > 0 &&
-              typeof values.has_emotional_distress_signs === "boolean" &&
-              typeof values.is_behavior_challenging === "boolean" &&
-              typeof values.struggle_with_social === "boolean" &&
-              typeof values.child_activeness === "boolean" &&
-              typeof values.has_difficulty_movement === "boolean" &&
-              !errors.concern_ids &&
-              !errors.languages &&
-              !errors.has_emotional_distress_signs &&
-              !errors.is_behavior_challenging &&
-              !errors.struggle_with_social &&
-              !errors.child_activeness &&
-              !errors.has_difficulty_movement
-            );
-          if (idx === 11)
-            return (
-              values.name &&
-              values.gender &&
-              values.birthDate &&
-              values.concern_ids.length > 0 &&
-              values.languages &&
-              values.languages.length > 0 &&
-              typeof values.has_emotional_distress_signs === "boolean" &&
-              typeof values.is_behavior_challenging === "boolean" &&
-              typeof values.struggle_with_social === "boolean" &&
-              typeof values.child_activeness === "boolean" &&
-              typeof values.has_difficulty_movement === "boolean" &&
-              typeof values.has_learning_problems === "boolean" &&
-              !errors.concern_ids &&
-              !errors.languages &&
-              !errors.has_emotional_distress_signs &&
-              !errors.is_behavior_challenging &&
-              !errors.struggle_with_social &&
-              !errors.child_activeness &&
-              !errors.has_difficulty_movement &&
-              !errors.has_learning_problems
-            );
-          if (idx === 12)
-            return (
-              values.name &&
-              values.gender &&
-              values.birthDate &&
-              values.concern_ids.length > 0 &&
-              values.languages &&
-              values.languages.length > 0 &&
-              typeof values.has_emotional_distress_signs === "boolean" &&
-              typeof values.is_behavior_challenging === "boolean" &&
-              typeof values.struggle_with_social === "boolean" &&
-              typeof values.child_activeness === "boolean" &&
-              typeof values.has_difficulty_movement === "boolean" &&
-              typeof values.has_learning_problems === "boolean" &&
-              typeof values.has_communication_problems === "boolean" &&
-              !errors.concern_ids &&
-              !errors.languages &&
-              !errors.has_emotional_distress_signs &&
-              !errors.is_behavior_challenging &&
-              !errors.struggle_with_social &&
-              !errors.child_activeness &&
-              !errors.has_difficulty_movement &&
-              !errors.has_learning_problems &&
-              !errors.has_communication_problems
-            );
-          if (idx === 13)
-            return (
-              values.name &&
-              values.gender &&
-              values.birthDate &&
-              values.concern_ids.length > 0 &&
-              values.languages &&
-              values.languages.length > 0 &&
-              typeof values.has_emotional_distress_signs === "boolean" &&
-              typeof values.is_behavior_challenging === "boolean" &&
-              typeof values.struggle_with_social === "boolean" &&
-              typeof values.child_activeness === "boolean" &&
-              typeof values.has_difficulty_movement === "boolean" &&
-              typeof values.has_learning_problems === "boolean" &&
-              typeof values.has_communication_problems === "boolean" &&
-              typeof values.has_meal_problems === "boolean" &&
-              !errors.concern_ids &&
-              !errors.languages &&
-              !errors.has_emotional_distress_signs &&
-              !errors.is_behavior_challenging &&
-              !errors.struggle_with_social &&
-              !errors.child_activeness &&
-              !errors.has_difficulty_movement &&
-              !errors.has_learning_problems &&
-              !errors.has_communication_problems &&
-              !errors.has_meal_problems
-            );
-          if (idx === 14)
-            return (
-              values.name &&
-              values.gender &&
-              values.birthDate &&
-              values.concern_ids.length > 0 &&
-              values.languages &&
-              values.languages.length > 0 &&
-              typeof values.has_emotional_distress_signs === "boolean" &&
-              typeof values.is_behavior_challenging === "boolean" &&
-              typeof values.struggle_with_social === "boolean" &&
-              typeof values.child_activeness === "boolean" &&
-              typeof values.has_difficulty_movement === "boolean" &&
-              typeof values.has_learning_problems === "boolean" &&
-              typeof values.has_communication_problems === "boolean" &&
-              typeof values.has_meal_problems === "boolean" &&
-              typeof values.has_difficulty_with_sleep === "boolean" &&
-              !errors.concern_ids &&
-              !errors.languages &&
-              !errors.has_emotional_distress_signs &&
-              !errors.is_behavior_challenging &&
-              !errors.struggle_with_social &&
-              !errors.child_activeness &&
-              !errors.has_difficulty_movement &&
-              !errors.has_learning_problems &&
-              !errors.has_communication_problems &&
-              !errors.has_meal_problems &&
-              !errors.has_difficulty_with_sleep
-            );
-          if (idx === 15)
-            return (
-              values.name &&
-              values.gender &&
-              values.birthDate &&
-              values.concern_ids.length > 0 &&
-              values.languages &&
-              values.languages.length > 0 &&
-              typeof values.has_emotional_distress_signs === "boolean" &&
-              typeof values.is_behavior_challenging === "boolean" &&
-              typeof values.struggle_with_social === "boolean" &&
-              typeof values.child_activeness === "boolean" &&
-              typeof values.has_difficulty_movement === "boolean" &&
-              typeof values.has_learning_problems === "boolean" &&
-              typeof values.has_communication_problems === "boolean" &&
-              typeof values.has_meal_problems === "boolean" &&
-              typeof values.has_difficulty_with_sleep === "boolean" &&
-              !errors.concern_ids &&
-              !errors.languages &&
-              !errors.has_emotional_distress_signs &&
-              !errors.is_behavior_challenging &&
-              !errors.struggle_with_social &&
-              !errors.child_activeness &&
-              !errors.has_difficulty_movement &&
-              !errors.has_learning_problems &&
-              !errors.has_communication_problems &&
-              !errors.has_meal_problems &&
-              !errors.has_difficulty_with_sleep &&
-              !errors.did_we_miss_anything
-            );
-          return false;
-        };
         // Render steps
         const renderStep = () => {
           switch (step) {
