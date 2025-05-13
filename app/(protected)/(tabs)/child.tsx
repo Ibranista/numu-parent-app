@@ -1,3 +1,4 @@
+import BehaviorChallenging from "@/components/form/BehaviorChallenging";
 import FinalStep from "@/components/form/finalStep";
 import StepOne from "@/components/form/FirstStep";
 import InitialStep from "@/components/form/initialStep";
@@ -20,7 +21,7 @@ import Toast from "react-native-toast-message";
 export default function App() {
   const dispatch = useAppDispatch();
   const concernData = useAppSelector(selectConcerns);
-  const totalSteps = 7;
+  const totalSteps = 8;
   const [step, setStep] = useState(-1);
 
   useEffect(() => {
@@ -36,6 +37,7 @@ export default function App() {
         concern_ids: [],
         languages: [],
         has_emotional_distress_signs: undefined,
+        is_behavior_challenging: undefined,
       }}
       validationSchema={childSchema}
       onSubmit={async (values, { setSubmitting, resetForm }) => {
@@ -46,6 +48,7 @@ export default function App() {
             concern_ids: values.concern_ids,
             name: values.name,
             has_emotional_distress_signs: values.has_emotional_distress_signs,
+            is_behavior_challenging: values.is_behavior_challenging,
             languages: values.languages,
           })
         );
@@ -117,6 +120,21 @@ export default function App() {
               !errors.languages &&
               !errors.has_emotional_distress_signs
             );
+          if (idx === 7)
+            return (
+              values.name &&
+              values.gender &&
+              values.birthDate &&
+              values.concern_ids.length > 0 &&
+              values.languages &&
+              values.languages.length > 0 &&
+              typeof values.has_emotional_distress_signs === "boolean" &&
+              typeof values.is_behavior_challenging === "boolean" &&
+              !errors.concern_ids &&
+              !errors.languages &&
+              !errors.has_emotional_distress_signs &&
+              !errors.is_behavior_challenging
+            );
           return false;
         };
         // Render steps
@@ -187,6 +205,16 @@ export default function App() {
                 />
               );
             case 6:
+              return (
+                <BehaviorChallenging
+                  setStep={setStep}
+                  values={values}
+                  errors={errors}
+                  touched={touched}
+                  setFieldValue={setFieldValue}
+                />
+              );
+            case 7:
               return (
                 <FinalStep
                   setStep={setStep}

@@ -63,7 +63,14 @@ export default function FinalStep({
           {values.has_emotional_distress_signs ? "Yes" : "No"}
         </Text>
       </Text>
-      <TouchableOpacity style={styles.backBtn} onPress={() => setStep(5)}>
+      {/* child behavior */}
+      <Text style={{ marginBottom: 20 }}>
+        Child Behavior:{" "}
+        <Text style={{ fontWeight: "bold" }}>
+          {values.is_behavior_challenging ? "Yes" : "No"}
+        </Text>
+      </Text>
+      <TouchableOpacity style={styles.backBtn} onPress={() => setStep(6)}>
         <Text style={styles.stepNavActive}>Back</Text>
       </TouchableOpacity>
     </Card>

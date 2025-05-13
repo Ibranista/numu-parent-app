@@ -35,4 +35,7 @@ export const childSchema = Yup.object().shape({
     has_emotional_distress_signs: Yup.boolean()
         .typeError("Please select Yes or No")
         .required("Please select Yes or No"),
+    is_behavior_challenging: Yup.boolean()
+        .typeError("Please select Yes or No")
+        .required("Please select Yes or No"),
 });
