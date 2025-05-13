@@ -41,26 +41,7 @@ export default function App() {
       initialValues={childInitialState}
       validationSchema={childSchema}
       onSubmit={async (values, { setSubmitting, resetForm }) => {
-        // const payload = {
-        //   gender: values.gender as "" | "male" | "female",
-        //   birthDate: values.birthDate as unknown as Date,
-        //   concern_ids: values.concern_ids,
-        //   name: values.name,
-        //   has_emotional_distress_signs: values.has_emotional_distress_signs,
-        //   is_behavior_challenging: values.is_behavior_challenging,
-        //   languages: values.languages,
-        //   struggle_with_social: values.struggle_with_social,
-        //   child_activeness: values.child_activeness,
-        //   has_difficulty_movement: values.has_difficulty_movement,
-        //   has_learning_problems: values.has_learning_problems,
-        //   has_communication_problems: values.has_communication_problems,
-        //   has_meal_problems: values.has_meal_problems,
-        //   has_difficulty_with_sleep: values.has_difficulty_with_sleep,
-        //   did_we_miss_anything: values.did_we_miss_anything,
-        // };
-        // console.log("payload", payload);
         const result = await dispatch(createChild(values));
-        console.log("result", result);
         setSubmitting(false);
         if (createChild.fulfilled.match(result)) {
           Toast.show({
@@ -71,6 +52,13 @@ export default function App() {
           });
           resetForm();
           setStep(-1);
+        } else {
+          Toast.show({
+            type: "error",
+            text1: "Submission failed. Please try again.",
+            position: "top",
+            visibilityTime: 3000,
+          });
         }
       }}
     >

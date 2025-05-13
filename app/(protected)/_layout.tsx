@@ -9,7 +9,6 @@ import { useEffect } from "react";
 
 export default function ProtectedLayout() {
   const authUser = useAppSelector(selectAuthUser);
-  console.log("currentUser on protected route", authUser);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
