@@ -28,6 +28,7 @@ export interface IChild {
     has_difficulty_with_sleep?: boolean;
     therapist_matches?: ITherapistMatch[];
     acceptedTherapists?: any[];
+    did_we_miss_anything?: string;
 };
 
 export interface ITherapist {

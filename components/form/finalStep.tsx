@@ -130,6 +130,13 @@ export default function FinalStep({
             {values.has_difficulty_with_sleep ? "Yes" : "No"}
           </Text>
         </Text>
+        {/* did we miss anything */}
+        <Text style={{ marginBottom: 20 }}>
+          Extra:{" "}
+          <Text style={{ fontWeight: "bold" }}>
+            {values.did_we_miss_anything}
+          </Text>
+        </Text>
       </ScrollView>
       <TouchableOpacity style={styles.backBtn} onPress={() => setStep(13)}>
         <Text style={styles.stepNavActive}>Back</Text>

@@ -43,4 +43,5 @@ export const childSchema = Yup.object().shape({
     has_communication_problems: Yup.boolean().required("Please select an option"),
     has_meal_problems: Yup.boolean().required("Please select an option"),
     has_difficulty_with_sleep: Yup.boolean().required("Please select an option"),
+    did_we_miss_anything: Yup.string().max(1000, "Please keep your answer under 1000 characters"),
 });
