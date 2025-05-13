@@ -21,7 +21,7 @@ export default function StepOne({
       subTitle="Gender"
       handleSubmit={undefined}
     >
-      <ProgressBar step={2} totalSteps={5} />
+      <ProgressBar step={2} totalSteps={6} />
       <View
         style={{
           flexDirection: "row",

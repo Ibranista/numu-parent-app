@@ -18,7 +18,7 @@ export default function InitialStep({
       title={"Let's start with your child's name."}
       subTitle={"Tell us about your child."}
     >
-      <ProgressBar step={1} totalSteps={5} />
+      <ProgressBar step={1} totalSteps={6} />
       <Text style={{ marginBottom: 5, fontWeight: "500" }}>
         Child&apos;s Name
       </Text>

@@ -42,7 +42,7 @@ export default function StepThree({
         />
       )}
     >
-      <ProgressBar step={4} totalSteps={5} />
+      <ProgressBar step={4} totalSteps={6} />
       <View style={localStyles.gridContainer}>
         {concernList &&
           concernList.map((concern: any) => {

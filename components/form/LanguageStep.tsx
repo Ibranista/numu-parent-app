@@ -55,7 +55,7 @@ export default function LanguageStep({
         />
       )}
     >
-      <ProgressBar step={4} totalSteps={5} />
+      <ProgressBar step={5} totalSteps={6} />
       <View style={localStyles.gridContainer}>
         {languages.map((lang) => {
           const isSelected = values.languages?.includes(lang.id);
@@ -151,7 +151,7 @@ const localStyles = StyleSheet.create({
     borderRadius: 12,
     marginBottom: 10,
     padding: 1.5,
-    minHeight: 70,
+    minHeight: 50,
   },
   gradientSelected: {
     shadowColor: "#8e44ad",
