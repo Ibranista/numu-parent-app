@@ -5,25 +5,34 @@ export default function Card({
   children,
   title,
   subTitle,
+  subTitle2,
   submitText,
   handleSubmit,
+  StepIcon,
 }: {
   children: React.ReactNode;
   title: string;
   subTitle: string;
+  subTitle2?: string;
   submitText?: string;
   handleSubmit?: () => void;
+  StepIcon?: React.FC;
 }) {
   return (
     <View style={styles.card}>
-      <Icon
-        name="user-circle"
-        size={40}
-        color="#8e44ad"
-        style={styles.userIcon}
-      />
+      {StepIcon ? (
+        <StepIcon />
+      ) : (
+        <Icon
+          name="user-circle"
+          size={40}
+          color="#8e44ad"
+          style={styles.userIcon}
+        />
+      )}
       <Text style={styles.subHeader}>{title}</Text>
       <Text style={styles.header}>{subTitle}</Text>
+      {subTitle2 && <Text style={styles.subHeader}>{subTitle2}</Text>}
       {children}
       {handleSubmit && (
         <TouchableOpacity
@@ -50,6 +59,12 @@ const styles = StyleSheet.create({
   userIcon: {
     alignSelf: "center",
     marginBottom: 10,
+  },
+
+  subTitle2: {
+    textAlign: "center",
+    color: "#555",
+    fontSize: 12,
   },
 
   subHeader: {

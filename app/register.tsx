@@ -26,7 +26,6 @@ const Register: React.FC = () => {
     onSubmit: async (values) => {
       const { confirmPassword, ...payload } = values;
       const result = await dispatch(registerUser({ ...payload, role: "user" }));
-      console.log("result-->", result);
       if (registerUser.fulfilled.match(result)) {
         Toast.show({
           type: "success",

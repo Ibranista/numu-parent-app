@@ -18,7 +18,7 @@ export default function InitialStep({
       title={"Let's start with your child's name."}
       subTitle={"Tell us about your child."}
     >
-      <ProgressBar step={1} totalSteps={5} />
+      <ProgressBar step={1} totalSteps={16} />
       <Text style={{ marginBottom: 5, fontWeight: "500" }}>
         Child&apos;s Name
       </Text>
@@ -49,22 +49,13 @@ export default function InitialStep({
         style={[
           styles.backBtn,
           (!values.name || errors?.name) && {
-            backgroundColor: "#8d44ada6",
+            backgroundColor: "#d4c4dba6",
           },
         ]}
         onPress={() => values.name && !errors?.name && setStep(1)}
         disabled={!values.name || !!errors?.name}
       >
-        <Text
-          style={[
-            styles.stepNavActive,
-            (!values.name || errors?.name) && {
-              backgroundColor: "transparent",
-            },
-          ]}
-        >
-          Next
-        </Text>
+        <Text style={styles.stepNavActive}>Next</Text>
       </TouchableOpacity>
     </Card>
   );

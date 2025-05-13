@@ -12,7 +12,9 @@ export default function ProgressBar({
 
   return (
     <View style={styles.progressContainer}>
-      <View style={[styles.progressBar, { width: `${width}%` }]} />
+      <View style={[styles.progressBar, { width: `${width}%` }]}>
+        <View style={styles.circle} />
+      </View>
     </View>
   );
 }
@@ -28,5 +30,20 @@ const styles = StyleSheet.create({
   progressBar: {
     height: 10,
     backgroundColor: "#6a1b9a",
+    position: "relative",
+    justifyContent: "center",
+    borderTopRightRadius: 5,
+    borderBottomRightRadius: 5,
+  },
+  circle: {
+    position: "absolute",
+    right: 0,
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: "#ffffff",
+    borderColor: "#6a1b9a",
+    borderWidth: 2,
+    top: -1,
   },
 });

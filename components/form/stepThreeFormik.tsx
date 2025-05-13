@@ -1,9 +1,11 @@
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useState } from "react";
-import { Text, TouchableOpacity } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
+import Icon from "react-native-vector-icons/Feather"; // You can also use Entypo, FontAwesome, etc.
 
 export default function StepThreeFormik({ value, error, onChange }: any) {
   const [show, setShow] = useState(false);
+
   return (
     <>
       <TouchableOpacity
@@ -14,14 +16,23 @@ export default function StepThreeFormik({ value, error, onChange }: any) {
           padding: 12,
           marginTop: 20,
           marginBottom: 10,
-          alignItems: "center",
         }}
         onPress={() => setShow(true)}
       >
-        <Text style={{ color: value ? "#222" : "#aaa" }}>
-          {value ? new Date(value).toDateString() : "Select birth date"}
-        </Text>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Text style={{ color: value ? "#222" : "#aaa" }}>
+            {value ? new Date(value).toDateString() : "Select birth date"}
+          </Text>
+          <Icon name="calendar" size={20} color="#888" />
+        </View>
       </TouchableOpacity>
+
       {show && (
         <DateTimePicker
           value={value ? new Date(value) : new Date()}
@@ -35,6 +46,7 @@ export default function StepThreeFormik({ value, error, onChange }: any) {
           maximumDate={new Date()}
         />
       )}
+
       {error && (
         <Text style={{ color: "red", fontSize: 12, marginTop: 5 }}>
           {error}

@@ -1,8 +1,9 @@
 import { IStepFormProps } from "@/Interface/childFormInterface";
 import { styles } from "@/styles/childFormStyle";
+import { Checkbox } from "expo-checkbox";
+import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
-import MultiSelect from "react-native-multiple-select";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Card from "../Card";
 import StepBtnBox from "../StepBtnBox";
 import ProgressBar from "./progressBar";
@@ -17,40 +18,74 @@ export default function StepThree({
 }: IStepFormProps & {
   setFieldValue: (field: string, value: any) => void;
 }) {
+  const toggleConcern = (id: string) => {
+    const currentIds = values.concern_ids || [];
+    if (currentIds.includes(id)) {
+      setFieldValue(
+        "concern_ids",
+        currentIds.filter((itemId: string) => itemId !== id)
+      );
+    } else {
+      setFieldValue("concern_ids", [...currentIds, id]);
+    }
+  };
+
   return (
     <Card
-      title="What are your concerns?"
-      subTitle="Select all that apply"
+      title="Select all that apply"
+      subTitle="What concerns do you have?"
       handleSubmit={undefined}
-    >
-      <ProgressBar step={4} totalSteps={5} />
-      {concernList && concernList.length > 0 && (
-        <MultiSelect
-          hideTags
-          items={concernList.map((c: any) => ({
-            id: c.id,
-            name: c.title,
-          }))}
-          uniqueKey="id"
-          onSelectedItemsChange={(items) => setFieldValue("concern_ids", items)}
-          selectedItems={values.concern_ids}
-          selectText="Select Concerns"
-          searchInputPlaceholderText="Search Concerns..."
-          submitButtonText="Submit"
-          styleDropdownMenuSubsection={{ backgroundColor: "#fff" }}
-          styleMainWrapper={{ backgroundColor: "#fff" }}
-          styleDropdownMenu={{ backgroundColor: "#fff" }}
-          styleTextDropdownSelected={{
-            color: "#8e44ad",
-            fontSize: 16,
-          }}
-          submitButtonColor="#8e44ad"
-          styleTextDropdown={{ color: "#8e44ad", fontSize: 16 }}
-          styleListContainer={{ backgroundColor: "#fff" }}
-          styleRowList={{ backgroundColor: "#fff", borderRadius: 8 }}
-          styleItemsContainer={{ backgroundColor: "#fff" }}
+      StepIcon={() => (
+        <Image
+          source={require("@/assets/images/questionIcon.png")}
+          style={{ width: 40, height: 40, margin: "auto", marginBottom: 10 }}
         />
       )}
+    >
+      <ProgressBar step={4} totalSteps={16} />
+      <View style={localStyles.gridContainer}>
+        {concernList &&
+          concernList.map((concern: any) => {
+            const isSelected = values.concern_ids?.includes(concern.id);
+            return (
+              <LinearGradient
+                key={concern.id}
+                colors={["#d1b3e0", "#8e44ad"]}
+                start={{ x: 0.5, y: 0 }}
+                end={{ x: 0.5, y: 1 }}
+                style={[
+                  localStyles.gradientBorder,
+                  isSelected && localStyles.gradientSelected,
+                ]}
+              >
+                <TouchableOpacity
+                  key={concern.id}
+                  onPress={() => toggleConcern(concern.id)}
+                  activeOpacity={0.8}
+                  style={[
+                    localStyles.concernCard,
+                    isSelected && localStyles.concernCardSelected,
+                  ]}
+                >
+                  <Checkbox
+                    value={isSelected}
+                    onValueChange={() => toggleConcern(concern.id)}
+                    color={isSelected ? "#8e44ad" : undefined}
+                    style={localStyles.checkbox}
+                  />
+                  <View style={localStyles.textContainer}>
+                    <Text style={localStyles.title}>{concern.title}</Text>
+                    {concern.description && (
+                      <Text style={localStyles.description}>
+                        {concern.description}
+                      </Text>
+                    )}
+                  </View>
+                </TouchableOpacity>
+              </LinearGradient>
+            );
+          })}
+      </View>
 
       {touched?.concern_ids && errors?.concern_ids && (
         <Text style={{ color: "red", fontSize: 12, marginTop: 5 }}>
@@ -96,3 +131,67 @@ export default function StepThree({
     </Card>
   );
 }
+
+const localStyles = StyleSheet.create({
+  gridContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    paddingBottom: 8,
+    marginTop: 10,
+  },
+  gradientBorder: {
+    width: "48%",
+    borderRadius: 16,
+    marginBottom: 12,
+    padding: 2,
+    minHeight: 100,
+  },
+  gradientSelected: {
+    shadowColor: "#8e44ad",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  concernCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    borderRadius: 14,
+    padding: 10,
+    flex: 1,
+    height: "100%",
+  },
+  concernCardSelected: {
+    borderColor: "#8e44ad",
+    borderWidth: 1,
+    shadowColor: "#8e44ad",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  cardSelected: {
+    backgroundColor: "#f5e9fb",
+  },
+  checkbox: {
+    marginRight: 10,
+    marginTop: 4,
+    borderRadius: 4,
+    borderColor: "#E5E5E5",
+  },
+  textContainer: {
+    flex: 1,
+  },
+  title: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#1a1a1a",
+    marginBottom: 2,
+  },
+  description: {
+    fontSize: 12,
+    color: "#666",
+  },
+});

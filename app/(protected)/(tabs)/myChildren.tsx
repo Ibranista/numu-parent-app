@@ -1,3 +1,4 @@
+import Loader from "@/components/ChildrenLoadingSkeleton";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { selectChild } from "@/features/child/selector";
@@ -28,7 +29,7 @@ export default function MyChildren() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const childrenData = useAppSelector(selectChild);
-  const { child } = childrenData ?? {};
+  const { child, loading } = childrenData ?? {};
   const [loadingTherapistIds, setLoadingTherapistIds] = useState<string[]>([]);
   const [declineSubmitting, setDeclineSubmitting] = useState(false);
 
@@ -63,9 +64,7 @@ export default function MyChildren() {
     items: string[];
   }>({ open: false, items: [] });
   const [showDeclineModal, setShowDeclineModal] = useState(false);
-  const [selectedTherapist, setSelectedTherapist] = useState<string | null>(
-    null
-  );
+  const [selectedTherapist, setSelectedTherapist] = useState<string>("");
 
   const handleTherapistStatusUpdate = async (
     {
@@ -136,167 +135,174 @@ export default function MyChildren() {
         </TouchableOpacity>
       </View>
 
-      <FlatList
-        data={child?.results || []}
-        keyExtractor={(item: any) => item.id.toString()}
-        showsVerticalScrollIndicator={false}
-        className="pb-4"
-        renderItem={({ item: myChild }: { item: any }) => (
-          <View
-            key={myChild.id}
-            className="bg-[#f3e8ff] dark:bg-[#2d223a] rounded-xl p-4 mb-4 shadow-sm border border-[#8450A0]/20"
-          >
-            <Pressable
-              className="flex-row justify-between items-start"
-              onPress={() =>
-                setExpanded(expanded === myChild.id ? null : myChild.id)
-              }
+      {loading ? (
+        <Loader />
+      ) : (
+        <FlatList
+          data={child?.results || []}
+          keyExtractor={(item: any) => item.id.toString()}
+          showsVerticalScrollIndicator={false}
+          className="pb-4"
+          renderItem={({ item: myChild }: { item: any }) => (
+            <View
+              key={myChild.id}
+              className="bg-[#f3e8ff] dark:bg-[#2d223a] rounded-xl p-4 mb-4 shadow-sm border border-[#8450A0]/20"
             >
-              <View>
-                <ThemedText
-                  type="subtitle"
-                  className="text-lg text-[#8450A0] dark:text-[#fff] mb-1"
-                >
-                  {myChild.name}
-                </ThemedText>
-                <ThemedText className="text-base text-gray-700 dark:text-gray-200 mb-1">
-                  Gender:{" "}
-                  <ThemedText className="font-semibold">
-                    {myChild.gender.charAt(0).toUpperCase() +
-                      myChild.gender.slice(1)}
+              <Pressable
+                className="flex-row justify-between items-start"
+                onPress={() =>
+                  setExpanded(expanded === myChild.id ? null : myChild.id)
+                }
+              >
+                <View>
+                  <ThemedText
+                    type="subtitle"
+                    className="text-lg text-[#8450A0] dark:text-[#fff] mb-1"
+                  >
+                    {myChild.name}
                   </ThemedText>
-                </ThemedText>
-                <ThemedText className="text-base text-gray-700 dark:text-gray-200">
-                  Birth Date:{" "}
-                  <ThemedText className="font-semibold">
-                    {myChild.birthDate}
+                  <ThemedText className="text-base text-gray-700 dark:text-gray-200 mb-1">
+                    Gender:{" "}
+                    <ThemedText className="font-semibold">
+                      {myChild.gender.charAt(0).toUpperCase() +
+                        myChild.gender.slice(1)}
+                    </ThemedText>
                   </ThemedText>
-                </ThemedText>
-              </View>
-              <Ionicons
-                name={expanded === myChild.id ? "chevron-up" : "chevron-down"}
-                size={24}
-                color="#8450A0"
-                style={{ marginLeft: 8 }}
-              />
-            </Pressable>
-            {expanded === myChild.id && (
-              <View className="mt-4">
-                <ThemedText className="text-base text-[#8450A0] dark:text-white font-semibold mb-3">
-                  Therapists:
-                </ThemedText>
-                <FlatList
-                  data={
-                    myChild?.therapist_matches?.filter(
-                      (item: any) =>
-                        item.status !== "accepted" && item.status !== "declined"
-                    ) || []
-                  }
-                  keyExtractor={(item: any) => item.therapist.id.toString()}
-                  renderItem={({ item }: { item: any }) => (
-                    <View
-                      key={item.therapist.id}
-                      className="mb-4 bg-white dark:bg-[#1a1324] rounded-lg p-4 border border-[#8450A0]/10 shadow-sm"
-                    >
-                      <View className="flex-row items-start">
-                        <Image
-                          source={{ uri: item.therapist.image }}
-                          style={{
-                            width: 56,
-                            height: 56,
-                            borderRadius: 28,
-                            backgroundColor: "#eee",
-                          }}
-                          resizeMode="cover"
-                          className="mr-3"
-                        />
-                        <View className="flex-1">
-                          <View className="flex-row justify-between items-start">
-                            <View>
-                              <ThemedText className="text-lg font-bold text-[#8450A0] dark:text-white">
-                                {item.therapist.name}
-                              </ThemedText>
-                              <ThemedText className="text-sm text-gray-500 dark:text-gray-300 mt-1">
-                                {item.therapist.experience_years} years
-                                experience
-                              </ThemedText>
-                            </View>
-                            <View className="flex-row space-x-2">
-                              <TouchableOpacity
-                                className="bg-[#8450A0] px-3 py-1 rounded-full items-center justify-center"
-                                onPress={() =>
-                                  handleTherapistStatusUpdate({
-                                    status: "accepted",
-                                    id: item.id,
-                                  })
-                                }
-                                disabled={loadingTherapistIds.includes(item.id)}
-                                accessibilityLabel="Accept Therapist"
-                              >
-                                <Text className="text-white font-semibold text-sm">
-                                  {loadingTherapistIds.includes(item.id)
-                                    ? "Accepting..."
-                                    : "Accept"}
-                                </Text>
-                              </TouchableOpacity>
-                              <TouchableOpacity
-                                className="bg-[#ff4444] px-3 py-1 rounded-full items-center justify-center"
-                                onPress={() => {
-                                  setSelectedTherapist(item.id);
-                                  setShowDeclineModal(true);
-                                }}
-                              >
-                                <Text className="text-white font-semibold text-sm">
-                                  Decline
-                                </Text>
-                              </TouchableOpacity>
-                            </View>
-                          </View>
-                          <View className="flex-row flex-wrap items-center mt-2">
-                            {item.therapist.expertise
-                              .slice(0, 3)
-                              .map((e: any, idx: number) => (
-                                <Pressable
-                                  key={e.id}
-                                  className="bg-[#8450A0]/10 px-2 py-1 rounded-full mr-2 mb-2"
+                  <ThemedText className="text-base text-gray-700 dark:text-gray-200">
+                    Birth Date:{" "}
+                    <ThemedText className="font-semibold">
+                      {myChild.birthDate}
+                    </ThemedText>
+                  </ThemedText>
+                </View>
+                <Ionicons
+                  name={expanded === myChild.id ? "chevron-up" : "chevron-down"}
+                  size={24}
+                  color="#8450A0"
+                  style={{ marginLeft: 8 }}
+                />
+              </Pressable>
+              {expanded === myChild.id && (
+                <View className="mt-4">
+                  <ThemedText className="text-base text-[#8450A0] dark:text-white font-semibold mb-3">
+                    Therapists:
+                  </ThemedText>
+                  <FlatList
+                    data={
+                      myChild?.therapist_matches?.filter(
+                        (item: any) =>
+                          item.status !== "accepted" &&
+                          item.status !== "declined"
+                      ) || []
+                    }
+                    keyExtractor={(item: any) => item.therapist.id.toString()}
+                    renderItem={({ item }: { item: any }) => (
+                      <View
+                        key={item.therapist.id}
+                        className="mb-4 bg-white dark:bg-[#1a1324] rounded-lg p-4 border border-[#8450A0]/10 shadow-sm"
+                      >
+                        <View className="flex-row items-start">
+                          <Image
+                            source={{ uri: item.therapist.image }}
+                            style={{
+                              width: 56,
+                              height: 56,
+                              borderRadius: 28,
+                              backgroundColor: "#eee",
+                            }}
+                            resizeMode="cover"
+                            className="mr-3"
+                          />
+                          <View className="flex-1">
+                            <View className="flex-row justify-between items-start">
+                              <View>
+                                <ThemedText className="text-lg font-bold text-[#8450A0] dark:text-white">
+                                  {item.therapist.name}
+                                </ThemedText>
+                                <ThemedText className="text-sm text-gray-500 dark:text-gray-300 mt-1">
+                                  {item.therapist.experience_years} years
+                                  experience
+                                </ThemedText>
+                              </View>
+                              <View className="flex-row space-x-2">
+                                <TouchableOpacity
+                                  className="bg-[#8450A0] px-3 py-1 rounded-full items-center justify-center"
                                   onPress={() =>
-                                    setExpertiseModal({
-                                      open: true,
-                                      items: item.therapist.expertise.map(
-                                        (x: any) => x.expertise
-                                      ),
+                                    handleTherapistStatusUpdate({
+                                      status: "accepted",
+                                      id: item.id,
                                     })
                                   }
+                                  disabled={loadingTherapistIds.includes(
+                                    item.id
+                                  )}
+                                  accessibilityLabel="Accept Therapist"
                                 >
-                                  <ThemedText className="text-xs text-[#8450A0] dark:text-[#c7a8e0] font-semibold">
-                                    {e.expertise}
-                                    {idx === 2 &&
-                                    item.therapist.expertise.length > 3
-                                      ? ` +${
-                                          item.therapist.expertise.length - 3
-                                        }`
-                                      : ""}
-                                  </ThemedText>
-                                </Pressable>
-                              ))}
+                                  <Text className="text-white font-semibold text-sm">
+                                    {loadingTherapistIds.includes(item.id)
+                                      ? "Accepting..."
+                                      : "Accept"}
+                                  </Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                  className="bg-[#ff4444] px-3 py-1 rounded-full items-center justify-center"
+                                  onPress={() => {
+                                    setSelectedTherapist(item.id);
+                                    setShowDeclineModal(true);
+                                  }}
+                                >
+                                  <Text className="text-white font-semibold text-sm">
+                                    Decline
+                                  </Text>
+                                </TouchableOpacity>
+                              </View>
+                            </View>
+                            <View className="flex-row flex-wrap items-center mt-2">
+                              {item.therapist.expertise
+                                .slice(0, 3)
+                                .map((e: any, idx: number) => (
+                                  <Pressable
+                                    key={e.id}
+                                    className="bg-[#8450A0]/10 px-2 py-1 rounded-full mr-2 mb-2"
+                                    onPress={() =>
+                                      setExpertiseModal({
+                                        open: true,
+                                        items: item.therapist.expertise.map(
+                                          (x: any) => x.expertise
+                                        ),
+                                      })
+                                    }
+                                  >
+                                    <ThemedText className="text-xs text-[#8450A0] dark:text-[#c7a8e0] font-semibold">
+                                      {e.expertise}
+                                      {idx === 2 &&
+                                      item.therapist.expertise.length > 3
+                                        ? ` +${
+                                            item.therapist.expertise.length - 3
+                                          }`
+                                        : ""}
+                                    </ThemedText>
+                                  </Pressable>
+                                ))}
+                            </View>
+                            {item.therapist.bio && (
+                              <ThemedText className="text-sm text-gray-700 dark:text-gray-300 mt-2">
+                                {item.therapist.bio.length > 100
+                                  ? `${item.therapist.bio.substring(0, 100)}...`
+                                  : item.therapist.bio}
+                              </ThemedText>
+                            )}
                           </View>
-                          {item.therapist.bio && (
-                            <ThemedText className="text-sm text-gray-700 dark:text-gray-300 mt-2">
-                              {item.therapist.bio.length > 100
-                                ? `${item.therapist.bio.substring(0, 100)}...`
-                                : item.therapist.bio}
-                            </ThemedText>
-                          )}
                         </View>
                       </View>
-                    </View>
-                  )}
-                />
-              </View>
-            )}
-          </View>
-        )}
-      />
+                    )}
+                  />
+                </View>
+              )}
+            </View>
+          )}
+        />
+      )}
 
       {/* decline modal */}
       <Modal

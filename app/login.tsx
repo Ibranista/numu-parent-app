@@ -37,8 +37,16 @@ const Login: React.FC = () => {
         visibilityTime: 2000,
       });
       router.replace("/");
+    } else if (authUser?.error) {
+      Toast.show({
+        type: "error",
+        text1: "Login failed",
+        text2: "Invalid credentials. Please try again.",
+        position: "top",
+        visibilityTime: 3000,
+      });
     }
-  }, [authUser?.user?.firebase_uid, router]);
+  }, [authUser?.user?.firebase_uid, authUser?.error, router]);
 
   return (
     <View className="flex-1 justify-center bg-gray-900 px-6">

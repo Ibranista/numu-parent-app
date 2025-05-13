@@ -24,13 +24,10 @@ export const getChildren = createAsyncThunk<
 export const createChild = createAsyncThunk(
     "child/createChild",
     async (childData: any, thunkAPI) => {
-        console.log("create called with", childData);
         try {
             const response = await api.post(`${feature}/`, childData);
-            console.log("create response", response);
             return response.data;
         } catch (error: any) {
-            console.log("create error", error);
             return thunkAPI.rejectWithValue(error.response.data);
         }
     }

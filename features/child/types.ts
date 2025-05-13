@@ -16,8 +16,19 @@ export interface IChild {
     birthDate: Date;
     concern_ids: string[];
     concerns: IConcern[];
+    languages: string[];
+    has_emotional_distress_signs?: boolean;
+    is_behavior_challenging?: boolean;
+    struggle_with_social?: boolean;
+    child_activeness?: boolean;
+    has_difficulty_movement?: boolean;
+    has_learning_problems?: boolean;
+    has_communication_problems?: boolean;
+    has_meal_problems?: boolean;
+    has_difficulty_with_sleep?: boolean;
     therapist_matches?: ITherapistMatch[];
     acceptedTherapists?: any[];
+    did_we_miss_anything?: string;
 };
 
 export interface ITherapist {

@@ -1,14 +1,25 @@
+import BehaviorChallenging from "@/components/form/BehaviorChallenging";
+import ChildActiveness from "@/components/form/ChildActiveness";
+import DidWeMissAnything from "@/components/form/DidWeMissAnything";
+import DifficultyMovement from "@/components/form/DifficultyMovement";
 import FinalStep from "@/components/form/finalStep";
 import StepOne from "@/components/form/FirstStep";
+import HasTroubleLearning from "@/components/form/HasTroubleLearning";
+import HasTroubleWithCommunication from "@/components/form/HasTroubleWithCommunication";
 import InitialStep from "@/components/form/initialStep";
+import LanguageStep from "@/components/form/LanguageStep";
+import MealBehavior from "@/components/form/MealBehavior";
+import MyChildBehavior from "@/components/form/MyChildBehavior";
+import SleepDifficulties from "@/components/form/SleepDifficulties";
 import StepThree from "@/components/form/stepthree";
-import StepThreeFormik from "@/components/form/stepThreeFormik";
+import StepTwoFormik from "@/components/form/stepThreeFormik";
 import StepTwo from "@/components/form/steptwo";
+import StruggleWithSocialSituation from "@/components/form/StruggleWithSocialSituation";
 import { createChild } from "@/features/child/thunkApi";
 import { selectConcerns } from "@/features/concerns/selector";
 import { getConcerns } from "@/features/concerns/thunk.api";
 import { useAppDispatch, useAppSelector } from "@/hooks/stateHooks";
-import { childSchema } from "@/schema/childSchema";
+import { childInitialState, childSchema } from "@/schema/childSchema";
 import { styles } from "@/styles/childFormStyle";
 import { Formik } from "formik";
 import React, { useEffect, useState } from "react";
@@ -18,7 +29,7 @@ import Toast from "react-native-toast-message";
 export default function App() {
   const dispatch = useAppDispatch();
   const concernData = useAppSelector(selectConcerns);
-  const totalSteps = 5;
+  const totalSteps = 16;
   const [step, setStep] = useState(-1);
 
   useEffect(() => {
@@ -27,22 +38,10 @@ export default function App() {
 
   return (
     <Formik
-      initialValues={{
-        name: "",
-        gender: "",
-        birthDate: "",
-        concern_ids: [],
-      }}
+      initialValues={childInitialState}
       validationSchema={childSchema}
       onSubmit={async (values, { setSubmitting, resetForm }) => {
-        const result = await dispatch(
-          createChild({
-            gender: values.gender as "" | "male" | "female",
-            birthDate: values.birthDate as unknown as Date,
-            concern_ids: values.concern_ids,
-            name: values.name,
-          })
-        );
+        const result = await dispatch(createChild(values));
         setSubmitting(false);
         if (createChild.fulfilled.match(result)) {
           Toast.show({
@@ -53,6 +52,13 @@ export default function App() {
           });
           resetForm();
           setStep(-1);
+        } else {
+          Toast.show({
+            type: "error",
+            text1: "Submission failed. Please try again.",
+            position: "top",
+            visibilityTime: 3000,
+          });
         }
       }}
     >
@@ -67,28 +73,6 @@ export default function App() {
         isSubmitting,
       }) => {
         const concernList = concernData?.concerns?.results || [];
-        // Step navigation validation
-        const canGoToStep = (idx: number) => {
-          if (idx === 0) return true;
-          if (idx === 1) return values.name && !errors.name;
-          if (idx === 2) return values.name && values.gender && !errors.gender;
-          if (idx === 3)
-            return (
-              values.name &&
-              values.gender &&
-              values.birthDate &&
-              !errors.birthDate
-            );
-          if (idx === 4)
-            return (
-              values.name &&
-              values.gender &&
-              values.birthDate &&
-              values.concern_ids.length > 0 &&
-              !errors.concern_ids
-            );
-          return false;
-        };
         // Render steps
         const renderStep = () => {
           switch (step) {
@@ -116,7 +100,7 @@ export default function App() {
             case 2:
               return (
                 <StepTwo setStep={setStep} values={values} errors={errors}>
-                  <StepThreeFormik
+                  <StepTwoFormik
                     value={values.birthDate}
                     error={touched.birthDate && errors.birthDate}
                     onChange={(date: string) =>
@@ -137,6 +121,117 @@ export default function App() {
                 />
               );
             case 4:
+              return (
+                <LanguageStep
+                  setStep={setStep}
+                  values={values}
+                  errors={errors}
+                  touched={touched}
+                  setFieldValue={setFieldValue}
+                />
+              );
+            case 5:
+              return (
+                <MyChildBehavior
+                  setStep={setStep}
+                  values={values}
+                  errors={errors}
+                  touched={touched}
+                  setFieldValue={setFieldValue}
+                />
+              );
+            case 6:
+              return (
+                <BehaviorChallenging
+                  setStep={setStep}
+                  values={values}
+                  errors={errors}
+                  touched={touched}
+                  setFieldValue={setFieldValue}
+                />
+              );
+            case 7:
+              return (
+                <StruggleWithSocialSituation
+                  setStep={setStep}
+                  values={values}
+                  errors={errors}
+                  touched={touched}
+                  setFieldValue={setFieldValue}
+                />
+              );
+            case 8:
+              return (
+                <ChildActiveness
+                  setStep={setStep}
+                  values={values}
+                  errors={errors}
+                  touched={touched}
+                  setFieldValue={setFieldValue}
+                />
+              );
+            case 9:
+              return (
+                <DifficultyMovement
+                  setStep={setStep}
+                  values={values}
+                  errors={errors}
+                  touched={touched}
+                  setFieldValue={setFieldValue}
+                />
+              );
+            case 10:
+              return (
+                <HasTroubleLearning
+                  setStep={setStep}
+                  values={values}
+                  errors={errors}
+                  touched={touched}
+                  setFieldValue={setFieldValue}
+                />
+              );
+            case 11:
+              return (
+                <HasTroubleWithCommunication
+                  setStep={setStep}
+                  values={values}
+                  errors={errors}
+                  touched={touched}
+                  setFieldValue={setFieldValue}
+                />
+              );
+            case 12:
+              return (
+                <MealBehavior
+                  setStep={setStep}
+                  values={values}
+                  errors={errors}
+                  touched={touched}
+                  setFieldValue={setFieldValue}
+                />
+              );
+            case 13:
+              return (
+                <SleepDifficulties
+                  setStep={setStep}
+                  values={values}
+                  errors={errors}
+                  touched={touched}
+                  setFieldValue={setFieldValue}
+                />
+              );
+            case 14:
+              return (
+                <DidWeMissAnything
+                  setStep={setStep}
+                  values={values}
+                  errors={errors}
+                  touched={touched}
+                  handleBlur={handleBlur}
+                  handleChange={handleChange}
+                />
+              );
+            case 15:
               return (
                 <FinalStep
                   setStep={setStep}
@@ -188,26 +283,18 @@ export default function App() {
             ) : (
               <>
                 {renderStep()}
-                <View style={styles.stepNavContainer}>
-                  {[...Array(totalSteps)].map((_, idx) => {
-                    const isDisabled = !canGoToStep(idx);
-                    return (
-                      <Text
-                        key={idx}
-                        style={[
-                          styles.stepNav,
-                          step === idx && styles.stepNavActive,
-                          isDisabled && { opacity: 0.4 },
-                        ]}
-                        onPress={() => {
-                          if (!isDisabled) setStep(idx);
-                        }}
-                      >
-                        {idx + 1}
-                      </Text>
-                    );
-                  })}
-                </View>
+                {step > -1 && step !== 15 && (
+                  <Text
+                    style={{
+                      textAlign: "right",
+                      fontSize: 16,
+                      marginBottom: 12,
+                      marginRight: 20,
+                    }}
+                  >
+                    Question {step + 1} of {totalSteps}
+                  </Text>
+                )}
               </>
             )}
           </View>
