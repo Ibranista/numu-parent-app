@@ -21,6 +21,7 @@ export interface IChild {
     is_behavior_challenging?: boolean;
     struggle_with_social?: boolean;
     child_activeness?: boolean;
+    has_difficulty_movement?: boolean;
     therapist_matches?: ITherapistMatch[];
     acceptedTherapists?: any[];
 };

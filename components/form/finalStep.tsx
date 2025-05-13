@@ -95,8 +95,15 @@ export default function FinalStep({
             {values.child_activeness ? "Yes" : "No"}
           </Text>
         </Text>
+        {/* child difficulty movement */}
+        <Text style={{ marginBottom: 20 }}>
+          Difficulty Movement:{" "}
+          <Text style={{ fontWeight: "bold" }}>
+            {values.has_difficulty_movement ? "Yes" : "No"}
+          </Text>
+        </Text>
       </ScrollView>
-      <TouchableOpacity style={styles.backBtn} onPress={() => setStep(8)}>
+      <TouchableOpacity style={styles.backBtn} onPress={() => setStep(9)}>
         <Text style={styles.stepNavActive}>Back</Text>
       </TouchableOpacity>
     </Card>
