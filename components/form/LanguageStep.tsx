@@ -12,7 +12,6 @@ export default function LanguageStep({
   setStep,
   values,
   errors,
-  concernList,
   touched,
   setFieldValue,
 }: IStepFormProps & {
@@ -50,7 +49,7 @@ export default function LanguageStep({
       handleSubmit={undefined}
       StepIcon={() => (
         <Image
-          source={require("@/assets/images/questionIcon.png")}
+          source={require("@/assets/images/languagesIcon.png")}
           style={{ width: 40, height: 40, margin: "auto", marginBottom: 10 }}
         />
       )}
