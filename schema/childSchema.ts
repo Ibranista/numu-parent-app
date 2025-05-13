@@ -42,4 +42,5 @@ export const childSchema = Yup.object().shape({
     has_learning_problems: Yup.boolean().required("Please select an option"),
     has_communication_problems: Yup.boolean().required("Please select an option"),
     has_meal_problems: Yup.boolean().required("Please select an option"),
+    has_difficulty_with_sleep: Yup.boolean().required("Please select an option"),
 });

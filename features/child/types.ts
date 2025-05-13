@@ -25,6 +25,7 @@ export interface IChild {
     has_learning_problems?: boolean;
     has_communication_problems?: boolean;
     has_meal_problems?: boolean;
+    has_difficulty_with_sleep?: boolean;
     therapist_matches?: ITherapistMatch[];
     acceptedTherapists?: any[];
 };

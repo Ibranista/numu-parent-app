@@ -6,7 +6,7 @@ import Card from "../Card";
 import StepBtnBox from "../StepBtnBox";
 import ProgressBar from "./progressBar";
 
-export default function MealBehavior({
+export default function SleepDifficulties({
   setStep,
   values,
   errors,
@@ -18,26 +18,29 @@ export default function MealBehavior({
   return (
     <Card
       title="My Child"
-      subTitle="My child has issues with eating or mealtime behavior"
+      subTitle="has difficulty with sleep"
+      subTitle2={"(e.g., falling asleep, waking up frequently)"}
       handleSubmit={undefined}
       StepIcon={() => (
         <Image
-          source={require("@/assets/images/mealIcon.png")}
+          source={require("@/assets/images/sleep_icon.png")}
           style={{ width: 40, height: 40, margin: "auto", marginBottom: 10 }}
         />
       )}
     >
-      <ProgressBar step={13} totalSteps={14} />
+      <ProgressBar step={14} totalSteps={15} />
       <View style={stylesToggle.toggleContainer}>
         {[
           { label: "Yes", value: true },
           { label: "No", value: false },
         ].map((option) => {
-          const isSelected = values.has_meal_problems === option.value;
+          const isSelected = values.has_difficulty_with_sleep === option.value;
           return (
             <TouchableOpacity
               key={option.label}
-              onPress={() => setFieldValue("has_meal_problems", option.value)}
+              onPress={() =>
+                setFieldValue("has_difficulty_with_sleep", option.value)
+              }
               style={[
                 stylesToggle.toggleButton,
                 isSelected && stylesToggle.toggleButtonSelected,
@@ -61,11 +64,12 @@ export default function MealBehavior({
           );
         })}
       </View>
-      {touched?.has_meal_problems && errors?.has_meal_problems && (
-        <Text style={{ color: "red", fontSize: 12, marginTop: 5 }}>
-          {errors.has_meal_problems as string}
-        </Text>
-      )}
+      {touched?.has_difficulty_with_sleep &&
+        errors?.has_difficulty_with_sleep && (
+          <Text style={{ color: "red", fontSize: 12, marginTop: 5 }}>
+            {errors.has_difficulty_with_sleep as string}
+          </Text>
+        )}
       <View style={{ height: 10 }} />
       <StepBtnBox>
         <TouchableOpacity
@@ -73,7 +77,7 @@ export default function MealBehavior({
             styles.backBtn,
             { paddingVertical: 6, paddingHorizontal: 12, flex: 1 },
           ]}
-          onPress={() => setStep(11)}
+          onPress={() => setStep(12)}
         >
           <Text style={styles.stepNavActive}>Prev</Text>
         </TouchableOpacity>
@@ -81,26 +85,26 @@ export default function MealBehavior({
           style={[
             styles.backBtn,
             { paddingVertical: 6, paddingHorizontal: 12, flex: 1 },
-            (typeof values.has_meal_problems !== "boolean" ||
-              errors?.has_meal_problems) && {
+            (typeof values.has_difficulty_with_sleep !== "boolean" ||
+              errors?.has_difficulty_with_sleep) && {
               backgroundColor: "#8d44ada6",
             },
           ]}
           onPress={() =>
-            typeof values.has_meal_problems === "boolean" &&
-            !errors?.has_meal_problems &&
-            setStep(13)
+            typeof values.has_difficulty_with_sleep === "boolean" &&
+            !errors?.has_difficulty_with_sleep &&
+            setStep(14)
           }
           disabled={
-            typeof values.has_meal_problems !== "boolean" ||
-            !!errors?.has_meal_problems
+            typeof values.has_difficulty_with_sleep !== "boolean" ||
+            !!errors?.has_difficulty_with_sleep
           }
         >
           <Text
             style={[
               styles.stepNavActive,
-              (typeof values.has_meal_problems !== "boolean" ||
-                errors?.has_meal_problems) && {
+              (typeof values.has_difficulty_with_sleep !== "boolean" ||
+                errors?.has_difficulty_with_sleep) && {
                 backgroundColor: "transparent",
               },
             ]}
