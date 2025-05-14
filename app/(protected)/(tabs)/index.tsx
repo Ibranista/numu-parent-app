@@ -1,18 +1,9 @@
-import { clearAuth } from "@/features/auth/authSlice";
 import { selectAuthUser } from "@/features/auth/selector";
-import { logout } from "@/firebaseConfig";
-import { AppDispatch, persistor } from "@/store/store";
-import { Button, Image, Text, View } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { Image, Text, View } from "react-native";
+import { useSelector } from "react-redux";
 
 export default function Index() {
-  const dispatch = useDispatch<AppDispatch>();
   const authUser = useSelector(selectAuthUser);
-  const handleLogout = async () => {
-    await logout();
-    dispatch(clearAuth());
-    persistor.purge();
-  };
 
   const firstName = authUser?.user?.first_name || "";
   const lastName = authUser?.user?.last_name || "";
@@ -27,14 +18,8 @@ export default function Index() {
         paddingHorizontal: 24,
       }}
     >
-      <Button
-        title="Logout"
-        onPress={handleLogout}
-        color="#FF0000"
-        accessibilityLabel="Logout Button"
-      />
       <Image
-        source={require("../../../assets/images/wecare.png")}
+        source={require("../../../assets/images/numulogo.png")}
         style={{
           width: 160,
           height: 160,
