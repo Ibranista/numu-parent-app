@@ -1,3 +1,4 @@
+import ProfileModalUI from "@/components/ui/ProfileModalUI";
 import { clearAuth } from "@/features/auth/authSlice";
 import { selectAuthUser } from "@/features/auth/selector";
 import { getUserProfile } from "@/features/auth/thunkApi";
@@ -5,7 +6,7 @@ import { onAuthChange } from "@/firebaseConfig";
 import "@/global.css";
 import { useAppDispatch, useAppSelector } from "@/hooks/stateHooks";
 import { Redirect, Stack } from "expo-router";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 
 export default function ProtectedLayout() {
   const authUser = useAppSelector(selectAuthUser);
@@ -27,18 +28,20 @@ export default function ProtectedLayout() {
     return () => unsubscribe();
   }, [dispatch]);
 
-  // Redirect based on auth state
   if (!authUser?.user?.firebase_uid && !authUser?.user?.uid) {
     return <Redirect href={"/login"} />;
   }
   return (
-    <Stack>
-      <Stack.Screen
-        name="(tabs)"
-        options={{
-          headerShown: false,
-        }}
-      />
-    </Stack>
+    <>
+      <ProfileModalUI />
+      <Stack>
+        <Stack.Screen
+          name="(tabs)"
+          options={{
+            headerShown: false,
+          }}
+        />
+      </Stack>
+    </>
   );
 }

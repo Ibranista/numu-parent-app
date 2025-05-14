@@ -25,15 +25,6 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="therapist-matches"
-        options={{
-          title: "Therapist Matches",
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="people" size={24} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
         name="child"
         options={{
           title: "Child",
