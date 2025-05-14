@@ -19,7 +19,7 @@ export default function Index() {
       }}
     >
       <Image
-        source={require("../../../assets/images/wecare.png")}
+        source={require("../../../assets/images/numulogo.png")}
         style={{
           width: 160,
           height: 160,
